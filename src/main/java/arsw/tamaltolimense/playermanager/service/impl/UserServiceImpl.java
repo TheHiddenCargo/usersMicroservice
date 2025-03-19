@@ -15,10 +15,11 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
+
     private UserRepository userRepository;
 
-
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository) {this.userRepository = userRepository;}
 
 
     @Override
@@ -106,6 +107,5 @@ public class UserServiceImpl implements UserService {
         currentUser.cleanBids();
         userRepository.save(currentUser);
     }
-
 
 }
