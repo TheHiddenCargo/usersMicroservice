@@ -1,0 +1,19 @@
+# Etapa 1: Imagen base de desarrollo
+FROM maven:3.9.6-eclipse-temurin-21
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar el archivo pom.xml para pre-descargar las dependencias
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copiar el código fuente
+COPY src ./src
+
+# Puerto expuesto
+EXPOSE 3000
+
+# Comando para ejecutar la aplicación en modo desarrollo
+# Usando spring-boot:run para tener recarga en caliente
+CMD ["mvn", "spring-boot:run"]

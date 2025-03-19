@@ -1,4 +1,4 @@
-package arsw.tamaltolimense.userService;
+package arsw.tamaltolimense.playermanager;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

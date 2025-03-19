@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: userService
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+
+
