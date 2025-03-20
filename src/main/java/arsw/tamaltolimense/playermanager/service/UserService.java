@@ -1,6 +1,6 @@
 package arsw.tamaltolimense.playermanager.service;
 
-import arsw.tamaltolimense.playermanager.UserException;
+import arsw.tamaltolimense.playermanager.exception.UserException;
 import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.model.User;
 import com.mongodb.DuplicateKeyException;
@@ -12,29 +12,26 @@ public interface UserService {
 
     User registerUser(String email, String nickName) throws UserException, DuplicateKeyException;
 
-    void registerBid(String userEmail,String container, int amount) throws UserException;
+    int getUserBalance(String nickName) throws UserException;
 
-    void registerBid(String userEmail,Bid bid) throws UserException;
+    String[] getUserInfo(String nickName) throws UserException,DuplicateKeyException;
 
-    List<User> getUsers();
+    List<Bid> getBids(String nickName) throws UserException;
 
-    User getUser(String email) throws UserException;
+    void deposit(String nickName, int amount) throws UserException;
 
-    int getUserBalance(String email) throws UserException;
+    void withdraw(String nickName, int amount) throws UserException;
 
-    List<Bid> getBids(String userEmail) throws UserException;
+    void bet(String nickName, int amount, String container) throws UserException;
 
-    int deposit(String email, int amount) throws UserException;
+    void bet(String nickName, Bid bid) throws UserException;
 
-    int withdraw(String email, int amount) throws UserException;
+    User updateUser(String nickName, String newNickName, String photo) throws UserException,DuplicateKeyException;
 
-    void updateNickName(String email, String newNickName) throws UserException,DuplicateKeyException;
 
-    void updatePhoto(String email, String photo) throws UserException;
+    void deleteUser(String nickName);
 
-    void deleteUser(String email);
-
-    void cleanBids(String userEmail) throws UserException;
+    void cleanBids(String nickName) throws UserException;
 
 
 

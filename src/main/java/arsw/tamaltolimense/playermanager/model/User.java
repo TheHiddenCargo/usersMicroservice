@@ -1,6 +1,6 @@
 package arsw.tamaltolimense.playermanager.model;
 
-import arsw.tamaltolimense.playermanager.UserException;
+import arsw.tamaltolimense.playermanager.exception.UserException;
 import com.mongodb.DuplicateKeyException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
@@ -19,8 +19,8 @@ import lombok.Setter;
 @Document(collection = "Users")
 public class User {
 
-    public static final char DEPOSIT = 'd';
-    public static final char WITHDRAW = 'w';
+    public static final String DEPOSIT = "deposit";
+    public static final String WITHDRAW  = "withdraw";
 
     @Id
     @NotNull
@@ -47,10 +47,10 @@ public class User {
     public void transaction(String type,int amount) throws UserException{
         if(amount <= 0) throw new UserException(UserException.NEGATIVE_VALUE);
         switch (type.toLowerCase()) {
-            case "deposit":
+            case User.DEPOSIT:
                 this.balance += amount;
                 break;
-            case "withdraw":
+            case User.WITHDRAW:
                 if(this.balance - amount < 0) throw new UserException(UserException.NEGATIVE_BALANCE);
                 this.balance -= amount;
                 break;
@@ -59,11 +59,11 @@ public class User {
         }
     }
 
-    public void registerBid(String container, int amount) {
+    public void registerBet(String container, int amount) {
         bids.add(new Bid(container, amount));
     }
 
-    public void registerBid(Bid bid) {
+    public void registerBet(Bid bid) {
         bids.add(bid);
     }
 

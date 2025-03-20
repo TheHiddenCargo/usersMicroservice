@@ -13,7 +13,7 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar playerManager.jar
 
-EXPOSE 3000
+EXPOSE 8080
 
 # Ejecutar la aplicación
 CMD ["java", "-jar", "playerManager.jar"]

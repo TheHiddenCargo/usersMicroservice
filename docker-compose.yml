@@ -1,17 +1,16 @@
 services:
   player-manager:
+    image: player-manager:1.0.0
     build:
       context: .
       dockerfile: Dockerfile
     container_name: player-manager
     ports:
-      - "3000:3000"
+      - "8080:8080"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/the_hidden_cargo
     depends_on:
       - data-base
-    networks:
-      -users:
 
   data-base:
     image: mongo
@@ -22,14 +21,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=ccastano41
       - MONGO_INITDB_ROOT_PASSWORD=EndGame2019
       - MONGO_INITDB_DATABASE=the_hidden_cargo
-    networks:
-      -users:
     volumes:
       - mongo-data:/data/db
 
-networks:
-  users:
-    name: users
 volumes:
   mongo-data:
 

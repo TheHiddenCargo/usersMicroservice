@@ -1,4 +1,4 @@
-package arsw.tamaltolimense.playermanager;
+package arsw.tamaltolimense.playermanager.exception;
 
 public class UserException extends Exception {
     public static final String NEGATIVE_BALANCE = "Balance can't be negative";
