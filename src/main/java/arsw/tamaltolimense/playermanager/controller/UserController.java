@@ -20,14 +20,6 @@ public class UserController {
 
 
 
-    @GetMapping("/{nickName}/balance")
-    public ResponseEntity<Object> getUserBalance(@PathVariable("nickName") String nickName) {
-        try{
-            return  new ResponseEntity<>(userService.getUserBalance(nickName),HttpStatus.OK);
-        }catch(UserException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
 
     @GetMapping("/{nickName}/info")
     public ResponseEntity<Object> getUserInfo(@PathVariable("nickName") String nickName) {
