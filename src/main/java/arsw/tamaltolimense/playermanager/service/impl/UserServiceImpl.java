@@ -40,12 +40,20 @@ public class UserServiceImpl implements UserService {
         if(nickName == null || nickName.isEmpty()) throw new UserException(UserException.NULL_VALUE);
         if(email == null || email.isEmpty()) throw new UserException(UserException.NULL_VALUE);
         if(checkNickName(nickName)) throw new UserException(UserException.NICK_NAME_FOUND);
+        if(checkEmail(email)) throw new UserException(UserException.EMAIL_FOUND);
         return userRepository.save(new User(email,nickName));
     }
 
     private boolean checkNickName(String nickName){
         for(User user : userRepository.findAll()){
             if(user.getNickName().equals(nickName)) return true;
+        }
+        return false;
+    }
+
+    private boolean checkEmail(String email){
+        for(User user : userRepository.findAll()){
+            if(user.getEmail().equals(email)) return true;
         }
         return false;
     }
@@ -104,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateNickName(String nickName, String newNickName) throws UserException {
-        if(newNickName == null || newNickName.isEmpty()) throw new UserException(UserException.NULL_VALUE);
+        if(newNickName == null || newNickName.isEmpty()) throw new UserException(UserException.NULL_NICK_NAME);
         if(!nickName.equals(newNickName) && checkNickName(newNickName)) throw new UserException(UserException.NICK_NAME_FOUND);
         User currentUser = this.getUser(nickName);
         currentUser.setNickName(newNickName);

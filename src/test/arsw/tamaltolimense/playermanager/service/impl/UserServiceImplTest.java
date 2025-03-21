@@ -81,6 +81,24 @@ class UserServiceImplTest {
     }
 
     @Test
+    void shouldNotRegisterDuplicateEmail(){
+        try{
+            User user1 = new User("casbsuw@mail.com","milo45");
+            User user2 = new User("casbsuw@mai.com","milo46");
+
+            when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+
+            userService.registerUser("casbsuw@mail.com","milo48");
+
+            fail("No exception thrown");
+        }catch (UserException e) {
+            assertEquals(UserException.EMAIL_FOUND,e.getMessage());
+
+            verify(userRepository, times(0)).save(any(User.class));
+        }
+    }
+
+    @Test
     void shouldNotRegisterNullNickName(){
         try{
            userService.registerUser("casbsuw@mail.com",null);
@@ -164,7 +182,7 @@ class UserServiceImplTest {
             fail("Should have thrown exception");
 
         }catch (UserException e){
-            assertEquals(UserException.NULL_VALUE,e.getMessage());
+            assertEquals(UserException.NULL_NICK_NAME,e.getMessage());
             verify(userRepository, times(0)).save(any(User.class));
 
         }
@@ -180,7 +198,7 @@ class UserServiceImplTest {
             fail("Should have thrown exception");
 
         }catch (UserException e){
-            assertEquals(UserException.NULL_VALUE,e.getMessage());
+            assertEquals(UserException.NULL_NICK_NAME,e.getMessage());
             verify(userRepository, times(0)).save(any(User.class));
 
         }
