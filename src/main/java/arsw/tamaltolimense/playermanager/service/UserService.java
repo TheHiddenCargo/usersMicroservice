@@ -18,14 +18,9 @@ public interface UserService {
 
     List<Bid> getBids(String nickName) throws UserException;
 
-    void deposit(String nickName, int amount) throws UserException;
+    void transaction(String nickName, int amount) throws UserException;
 
-    void withdraw(String nickName, int amount) throws UserException;
-
-
-    void bet(String nickName, Bid bid) throws UserException;
-
-
+    void registerBid(String nickName, Bid bid) throws UserException;
 
     User updatePhoto(String nickName, String photo) throws UserException;
 

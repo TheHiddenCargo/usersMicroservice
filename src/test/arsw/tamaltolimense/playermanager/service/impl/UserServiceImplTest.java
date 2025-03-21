@@ -109,9 +109,30 @@ class UserServiceImplTest {
     }
 
     @Test
+    void shouldNotRegisterEmptyNickName(){
+        try{
+            userService.registerUser("milo","");
+            fail("Should have thrown exception");
+        }catch (UserException e){
+            assertEquals(UserException.NULL_VALUE,e.getMessage());
+        }
+    }
+
+
+    @Test
     void shouldNotRegisterNullEmail(){
         try{
             userService.registerUser(null,"null");
+            fail("Should have thrown exception");
+        }catch (UserException e){
+            assertEquals(UserException.NULL_VALUE,e.getMessage());
+        }
+    }
+
+    @Test
+    void shouldNotRegisterEmptyEmail(){
+        try{
+            userService.registerUser("   ","null");
             fail("Should have thrown exception");
         }catch (UserException e){
             assertEquals(UserException.NULL_VALUE,e.getMessage());
@@ -239,199 +260,65 @@ class UserServiceImplTest {
         }
     }
 
-    @Test
-    void shouldDoDeposit(){
+   @Test
+   void shouldDoTransaction(){
         try{
-            User savedUser;
             User user = new User("casbsuw@mail.com", "milo45");
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
+            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
             when(userRepository.save(any(User.class))).thenReturn(user);
-            userService.deposit("milo45", 45000);
-            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-            verify(userRepository).save(userCaptor.capture());
-            savedUser = userCaptor.getValue();
+            userService.transaction("milo45",50000);
+            userService.transaction("milo45",-10000);
 
-            assertEquals(user, savedUser);
-            assertEquals(45000, userService.getUserBalance("milo45"));
+            assertEquals(40000,userService.getUserBalance("milo45"));
 
-            verify(userRepository, times(1)).save(any(User.class));
-            verify(userRepository, times(2)).findByNickName("milo45");
-
-        }catch (UserException e){
-            fail(e.getMessage());
-        }
-    }
-
-    @Test
-    void shouldNotDeposit0(){
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(new User("casbsuw@mail.com", "milo45"));
-            userService.deposit("milo45", 0);
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-        }
-
-    }
-
-    @Test
-    void shouldNotDepositNegative(){
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(new User("casbsuw@mail.com", "milo45"));
-            userService.deposit("milo45", -45);
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-        }
-
-    }
-
-    @Test
-    void shouldWithdraw(){
-        try{
-
-            User user = new User("casbsuw@mail.com", "milo45");
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            when(userRepository.save(any(User.class))).thenReturn(user);
-            userService.deposit("milo45", 45000);
-
-            userService.withdraw("milo45", 40000);
-            assertEquals(5000, userService.getUserBalance("milo45"));
             verify(userRepository, times(2)).save(any(User.class));
             verify(userRepository, times(3)).findByNickName("milo45");
 
         }catch (UserException e){
             fail(e.getMessage());
         }
-    }
+   }
 
     @Test
-    void shouldNotWithdraw0(){
-        try{
-
-            when(userRepository.findByNickName("milo45")).thenReturn(new User("casbsuw@mail.com", "milo45"));
-            userService.withdraw("milo45", 0);
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-        }
-
-    }
-
-    @Test
-    void shouldNotWithdrawNegative(){
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(new User("casbsuw@mail.com", "milo45"));
-            userService.withdraw("milo45", -45);
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-        }
-
-    }
-
-    @Test
-    void shouldNotWithdrawMore(){
+    void shouldNotDoTransaction(){
         User user = new User("casbsuw@mail.com", "milo45");
-        when(userRepository.findByNickName("milo45")).thenReturn(user);
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
+        when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
         try{
-            userService.deposit("milo45", 50000);
-        }catch (UserException e){
-            fail(e.getMessage());
-        }
 
-        try{
-            userService.withdraw("milo45", 550000);
-            fail("Should have thrown exception");
+            userService.transaction("milo45",-60000);
+            fail("No exception thrown");
+
+
         }catch (UserException e){
             assertEquals(UserException.NEGATIVE_BALANCE,e.getMessage());
-            assertEquals(50000, user.getBalance());
-            verify(userRepository, times(1)).save(any(User.class));
-            verify(userRepository, times(2)).findByNickName("milo45");
+            assertEquals(0,user.getBalance());
+            verify(userRepository, times(0)).save(any(User.class));
+            verify(userRepository, times(1)).findByNickName("milo45");
         }
     }
 
     @Test
-    void shouldBet(){
+    void shouldRegisterBid(){
         try{
             User user = new User("casbsuw@mail.com", "milo45");
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
+            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
             when(userRepository.save(any(User.class))).thenReturn(user);
-            userService.deposit("milo45", 50000);
-            userService.bet("milo45",new Bid("1",5000));
-            userService.bet("milo45",new Bid("1",5000));
-            userService.bet("milo45",new Bid("1",5000));
+            userService.registerBid("milo45", new Bid("1",5000));
+            userService.registerBid("milo45", new Bid("1",5000));
+            userService.registerBid("milo45", new Bid("1",5000));
 
-            assertEquals(3, userService.getBids("milo45").size());
-            assertEquals("1", userService.getBids("milo45").getFirst().getContainerId());
-            assertEquals(5000,userService.getBids("milo45").getFirst().getAmount());
-            assertEquals(35000,userService.getUserBalance("milo45"));
 
-            verify(userRepository, times(4)).save(any(User.class));
-            verify(userRepository, times(8)).findByNickName("milo45");
+            assertEquals(3,userService.getBids("milo45").size());
+            assertEquals("1",userService.getBids("milo45").getFirst().getContainerId());
+            assertEquals(5000,userService.getBids("milo45").getLast().getAmount());
+
+            verify(userRepository, times(3)).save(any(User.class));
+            verify(userRepository, times(6)).findByNickName("milo45");
+
+
 
         }catch (UserException e){
             fail(e.getMessage());
-        }
-
-    }
-
-    @Test
-    void shouldNotBet0(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.bet("milo45", new Bid("1",0));
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-            assertEquals(0, user.getBalance());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(1)).findByNickName("milo45");
-        }
-
-    }
-
-    @Test
-    void shouldNotBetNegative(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.bet("milo45", new Bid("1",-45));
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-            assertEquals(0, user.getBalance());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(1)).findByNickName("milo45");
-        }
-    }
-
-    @Test
-    void shouldNotBetMore(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        when(userRepository.findByNickName("milo45")).thenReturn(user);
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        try{
-            userService.deposit("milo45", 50000);
-        }catch (UserException e){
-            fail(e.getMessage());
-        }
-
-        try{
-            userService.bet("milo45", new Bid("1",55000));
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_BALANCE,e.getMessage());
-            assertEquals(50000, user.getBalance());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(1)).save(any(User.class));
-            verify(userRepository, times(2)).findByNickName("milo45");
         }
     }
 
@@ -440,11 +327,10 @@ class UserServiceImplTest {
         User user = new User("casbsuw@mail.com", "milo45");
         try{
             when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.bet("milo45", null);
+            userService.registerBid("milo45", null);
             fail("Should have thrown exception");
         }catch (UserException e){
             assertEquals(UserException.NULL_VALUE,e.getMessage());
-            assertEquals(0, user.getBalance());
             assertEquals(0,user.getBids().size());
             verify(userRepository, times(0)).save(any(User.class));
             verify(userRepository, times(0)).findByNickName("milo45");
@@ -456,11 +342,10 @@ class UserServiceImplTest {
         User user = new User("casbsuw@mail.com", "milo45");
         try{
             when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.bet("milo45", new Bid(null,-45));
+            userService.registerBid("milo45", new Bid(null,-45));
             fail("Should have thrown exception");
         }catch (UserException e){
             assertEquals(UserException.NULL_CONTAINER,e.getMessage());
-            assertEquals(0, user.getBalance());
             assertEquals(0,user.getBids().size());
             verify(userRepository, times(0)).save(any(User.class));
             verify(userRepository, times(0)).findByNickName("milo45");
@@ -472,11 +357,40 @@ class UserServiceImplTest {
         User user = new User("casbsuw@mail.com", "milo45");
         try{
             when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.bet("milo45", new Bid("",-45));
+            userService.registerBid("milo45", new Bid("",-45));
             fail("Should have thrown exception");
         }catch (UserException e){
             assertEquals(UserException.NULL_CONTAINER,e.getMessage());
-            assertEquals(0, user.getBalance());
+            assertEquals(0,user.getBids().size());
+            verify(userRepository, times(0)).save(any(User.class));
+            verify(userRepository, times(0)).findByNickName("milo45");
+        }
+    }
+
+    @Test
+    void shouldNotRegisterNegativeBid(){
+        User user = new User("casbsuw@mail.com", "milo45");
+        try{
+            when(userRepository.findByNickName("milo45")).thenReturn(user);
+            userService.registerBid("milo45", new Bid("1",-45));
+            fail("Should have thrown exception");
+        }catch (UserException e){
+            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
+            assertEquals(0,user.getBids().size());
+            verify(userRepository, times(0)).save(any(User.class));
+            verify(userRepository, times(0)).findByNickName("milo45");
+        }
+    }
+
+    @Test
+    void shouldNotRegisterZeroBid(){
+        User user = new User("casbsuw@mail.com", "milo45");
+        try{
+            when(userRepository.findByNickName("milo45")).thenReturn(user);
+            userService.registerBid("milo45", new Bid("1",0));
+            fail("Should have thrown exception");
+        }catch (UserException e){
+            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
             assertEquals(0,user.getBids().size());
             verify(userRepository, times(0)).save(any(User.class));
             verify(userRepository, times(0)).findByNickName("milo45");
@@ -489,19 +403,19 @@ class UserServiceImplTest {
             User user = new User("casbsuw@mail.com", "milo45");
             when(userRepository.findByNickName("milo45")).thenReturn(user);
             when(userRepository.save(any(User.class))).thenReturn(user);
-            userService.deposit("milo45", 50000);
-            userService.bet("milo45",new Bid("1",5000));
-            userService.bet("milo45",new Bid("1",5000));
-            userService.bet("milo45",new Bid("1",5000));
+
+            userService.registerBid("milo45",new Bid("1",5000));
+            userService.registerBid("milo45",new Bid("1",5000));
+            userService.registerBid("milo45",new Bid("1",5000));
 
             userService.cleanBids("milo45");
 
             assertEquals(0, userService.getBids("milo45").size());
 
-            assertEquals(35000,userService.getUserBalance("milo45"));
 
-            verify(userRepository, times(5)).save(any(User.class));
-            verify(userRepository, times(7)).findByNickName("milo45");
+
+            verify(userRepository, times(4)).save(any(User.class));
+            verify(userRepository, times(5)).findByNickName("milo45");
 
         }catch (UserException e){
             fail(e.getMessage());

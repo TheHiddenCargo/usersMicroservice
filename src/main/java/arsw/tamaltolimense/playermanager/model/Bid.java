@@ -2,12 +2,16 @@ package arsw.tamaltolimense.playermanager.model;
 
 import lombok.Getter;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Map;
 
 
 @Getter
+@Document
 public class Bid {
+    @Id
     private final ObjectId bidId;
     private final String containerId;
     private final int amount;

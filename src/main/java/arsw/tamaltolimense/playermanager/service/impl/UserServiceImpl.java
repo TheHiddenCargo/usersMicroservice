@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(String email, String nickName) throws UserException {
-        if(nickName == null || nickName.isEmpty()) throw new UserException(UserException.NULL_VALUE);
-        if(email == null || email.isEmpty()) throw new UserException(UserException.NULL_VALUE);
+        if(nickName == null || nickName.trim().equals("")) throw new UserException(UserException.NULL_VALUE);
+        if(email == null || email.trim().equals("")) throw new UserException(UserException.NULL_VALUE);
         if(checkNickName(nickName)) throw new UserException(UserException.NICK_NAME_FOUND);
         if(checkEmail(email)) throw new UserException(UserException.EMAIL_FOUND);
         return userRepository.save(new User(email,nickName));
@@ -82,37 +82,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deposit(String nickName, int amount) throws UserException {
+    public void transaction(String nickName, int amount) throws UserException {
         User currentUser = this.getUser(nickName);
-        currentUser.transaction(User.DEPOSIT,amount);
-        notifyBalanceChange(userRepository.save(currentUser));
-    }
-
-    @Override
-    public void withdraw(String nickName, int amount) throws UserException {
-        User currentUser = this.getUser(nickName);
-        currentUser.transaction(User.WITHDRAW,amount);
+        currentUser.transaction(amount);
         notifyBalanceChange(userRepository.save(currentUser));
     }
 
 
-
-
     @Override
-    public void bet(String nickname, Bid bid) throws UserException {
+    public void registerBid(String nickname, Bid bid) throws UserException {
         if(bid == null) throw new UserException(UserException.NULL_VALUE);
-        if(bid.getContainerId() == null || bid.getContainerId().isEmpty()) throw new UserException(UserException.NULL_CONTAINER);
+        if(bid.getContainerId() == null || bid.getContainerId().trim().equals("")) throw new UserException(UserException.NULL_CONTAINER);
+        if(bid.getAmount() <= 0) throw new UserException(UserException.NEGATIVE_VALUE);
         User user = this.getUser(nickname);
-        user.transaction(User.WITHDRAW,bid.getAmount());
         user.registerBet(bid);
-        userRepository.save(user);
-        notifyBalanceChange(user);
-        notifyBidChange(user);
+        notifyBidChange(userRepository.save(user));
     }
 
     @Override
     public User updateNickName(String nickName, String newNickName) throws UserException {
-        if(newNickName == null || newNickName.isEmpty()) throw new UserException(UserException.NULL_NICK_NAME);
+        if(newNickName == null || newNickName.trim().equals("")) throw new UserException(UserException.NULL_NICK_NAME);
         if(!nickName.equals(newNickName) && checkNickName(newNickName)) throw new UserException(UserException.NICK_NAME_FOUND);
         User currentUser = this.getUser(nickName);
         currentUser.setNickName(newNickName);

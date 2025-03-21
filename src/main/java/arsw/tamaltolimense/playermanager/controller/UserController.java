@@ -3,7 +3,6 @@ package arsw.tamaltolimense.playermanager.controller;
 import arsw.tamaltolimense.playermanager.exception.UserException;
 import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.service.UserService;
-import com.mongodb.DuplicateKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,51 +34,35 @@ public class UserController {
     public ResponseEntity<Object> registerUser(@RequestParam("email") String email, @RequestParam("nickName") String nickName) {
         try{
             return new ResponseEntity<>(userService.registerUser(email,nickName), HttpStatus.CREATED);
-        }catch(UserException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }catch(DuplicateKeyException e){
+        }catch(UserException e) {
+            if(e.getMessage().equals(UserException.NULL_VALUE)) return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
-    @PutMapping("/deposit")
+    @PutMapping("/bids")
+    public ResponseEntity<Object> registerBid(@RequestParam("nickname") String nickName, @RequestBody Bid bid){
+        try{
+            userService.registerBid(nickName,bid);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }catch(UserException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/transactions")
     public ResponseEntity<Object> deposit(@RequestParam("nickName") String nickName, @RequestParam("amount") int amount) {
         try{
-            userService.deposit(nickName,amount);
+            userService.transaction(nickName,amount);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch(UserException e){
             if(e.getMessage().equals(UserException.USER_NOT_FOUND)) return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PutMapping("/withdraw")
-    public ResponseEntity<Object> withdraw(@RequestParam("nickName") String nickName, @RequestParam("amount") int amount) {
-        try {
-            userService.withdraw(nickName,amount);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch (UserException e){
-            if(e.getMessage().equals(UserException.USER_NOT_FOUND)) return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-            if(e.getMessage().equals(UserException.NEGATIVE_BALANCE)) return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
 
 
-    @PutMapping("/bet")
-    public ResponseEntity<Object> bet(@RequestParam("nickName") String nickName,@RequestBody Bid bid) {
-        try {
-            userService.bet(nickName, bid);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (UserException e) {
-            if (e.getMessage().equals(UserException.USER_NOT_FOUND))
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-            if (e.getMessage().equals(UserException.NEGATIVE_BALANCE))
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @PutMapping("/update/nickname/{nickName}")
     public ResponseEntity<Object> nickName(@PathVariable("nickName") String nickName,

@@ -1,0 +1,471 @@
+{
+	"info": {
+		"_postman_id": "8a5155cf-f77d-4b88-8683-fae5113c0bcd",
+		"name": "Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41727330"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/users/register?email=mks%40gmail.com&nickName=andres45",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/register?email=mks%40gmail.com&nickName=andres45",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "mks%40gmail.com"
+						},
+						{
+							"key": "nickName",
+							"value": "andres45"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/register?email=samsa%40outlook.com&nickName=ssc",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/register?email=samsa%40outlook.com&nickName=ssc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "samsa%40outlook.com"
+						},
+						{
+							"key": "nickName",
+							"value": "ssc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/users/register?email=samsa%40outlook.com&nickName=ssc' \\\r\n  -H 'accept: */*' \\\r\n  -d ''"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/register?email=mks%40gmail.com&nickName=milo92",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/register?email=ssc%40gmail.com&nickName=ssc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "ssc%40gmail.com"
+						},
+						{
+							"key": "nickName",
+							"value": "ssc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/users/register?email=mks%40gmail.com&nickName=milo92' \\\r\n  -H 'accept: */*' \\\r\n  -d ''"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/register?email=%20%20%20%20%20%20%20%20%20%20%20%20%20%20&nickName=milo98",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/register?email=%20%20%20%20%20%20%20%20%20%20%20%20%20%20&nickName=milo98",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "%20%20%20%20%20%20%20%20%20%20%20%20%20%20"
+						},
+						{
+							"key": "nickName",
+							"value": "milo98"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/users/register?email=%20%20%20%20%20%20%20%20%20%20%20%20%20%20&nickName=milo98' \\\r\n  -H 'accept: */*' \\\r\n  -d ''"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/register?email=cam%40gmail&nickName=%20%20%20%20%20%20",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/register?email=cam%40gmail&nickName=%20%20%20%20%20%20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "cam%40gmail"
+						},
+						{
+							"key": "nickName",
+							"value": "%20%20%20%20%20%20"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/users/register?email=cam%40gmail&nickName=%20%20%20%20%20%20' \\\r\n  -H 'accept: */*' \\\r\n  -d ''"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/update/photo/andres45?photo=hola.png",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/update/photo/andres45?photo=hola.png",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"update",
+						"photo",
+						"andres45"
+					],
+					"query": [
+						{
+							"key": "photo",
+							"value": "hola.png"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/users/update/photo/andres45?photo=hola.png' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/update/nickname/ssc?newNickName=samatha",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/update/nickname/ssc?newNickName=samatha",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"update",
+						"nickname",
+						"ssc"
+					],
+					"query": [
+						{
+							"key": "newNickName",
+							"value": "samatha"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/users/update/nickname/ssc?newNickName=samatha' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/update/nickname/samnatha?newNickName=andres45",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/update/nickname/samnatha?newNickName=andres45",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"update",
+						"nickname",
+						"samnatha"
+					],
+					"query": [
+						{
+							"key": "newNickName",
+							"value": "andres45"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/users/update/nickname/samnatha?newNickName=andres45' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/transactions?nickName=andres45&amount=5000",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/transactions?nickName=andres45&amount=5000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "nickName",
+							"value": "andres45"
+						},
+						{
+							"key": "amount",
+							"value": "5000"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/users/transactions?nickName=andres45&amount=5000' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/transactions?nickName=andres45&amount=-20000",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/transactions?nickName=andres45&amount=-20000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "nickName",
+							"value": "andres45"
+						},
+						{
+							"key": "amount",
+							"value": "-20000"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/users/transactions?nickName=andres45&amount=-20000' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/andres45/info",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/andres45/info",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"andres45",
+						"info"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\r\n  'http://localhost:8080/users/andres45/info' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/samatha/info",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/samatha/info",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"samatha",
+						"info"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\r\n  'http://localhost:8080/users/samatha/info' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/delete/andres45",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/delete/andres45",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"delete",
+						"andres45"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'DELETE' \\\r\n  'http://localhost:8080/users/delete/andres45' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/users/delete/samatha",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/delete/samatha",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"delete",
+						"samatha"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'DELETE' \\\r\n  'http://localhost:8080/users/delete/samatha' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		}
+	]
+}

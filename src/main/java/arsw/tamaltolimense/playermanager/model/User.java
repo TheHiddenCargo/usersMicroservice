@@ -18,8 +18,7 @@ import lombok.Setter;
 @Document(collection = "Users")
 public class User {
 
-    public static final String DEPOSIT = "deposit";
-    public static final String WITHDRAW  = "withdraw";
+
 
     @Id
     @NotNull
@@ -42,19 +41,9 @@ public class User {
         bids = new ArrayList<>();
     }
 
-    public void transaction(String type,int amount) throws UserException{
-        if(amount <= 0) throw new UserException(UserException.NEGATIVE_VALUE);
-        switch (type.toLowerCase()) {
-            case User.DEPOSIT:
-                this.balance += amount;
-                break;
-            case User.WITHDRAW:
-                if(this.balance - amount < 0) throw new UserException(UserException.NEGATIVE_BALANCE);
-                this.balance -= amount;
-                break;
-            default:
-                throw new UserException(UserException.INVALID_TRANSACTION);
-        }
+    public void transaction(int amount) throws UserException{
+        if(this.balance + amount < 0) throw new UserException(UserException.NEGATIVE_BALANCE);
+        this.balance += amount;
     }
 
     public void registerBet(Bid bid) {
