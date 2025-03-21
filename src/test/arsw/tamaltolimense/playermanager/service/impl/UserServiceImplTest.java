@@ -4,7 +4,6 @@ import arsw.tamaltolimense.playermanager.exception.UserException;
 import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.model.User;
 import arsw.tamaltolimense.playermanager.repository.UserRepository;
-import com.mongodb.DuplicateKeyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,10 +57,26 @@ class UserServiceImplTest {
             User savedUser = userCaptor.getValue();
             assertEquals(registeredUser, savedUser);
             assertEquals(new User("casbsuw@mail.com","milo45") , savedUser);
-        }catch (UserException e){
+        }catch (UserException e) {
             fail(e.getMessage());
-        }catch (DuplicateKeyException e){
-            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    void shouldNotRegisterDuplicateNickName(){
+        try{
+            User user1 = new User("casbsuw@mail.com","milo45");
+            User user2 = new User("casbsuw@mail.com","milo46");
+
+            when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+
+            userService.registerUser("casbsuw@mail.com","milo45");
+
+            fail("No exception thrown");
+        }catch (UserException e) {
+            assertEquals(UserException.NICK_NAME_FOUND,e.getMessage());
+
+            verify(userRepository, times(0)).save(any(User.class));
         }
     }
 
@@ -93,14 +110,13 @@ class UserServiceImplTest {
             assertNotNull(oldInfo);
             assertEquals("milo45", oldInfo[0]);
             assertEquals("", oldInfo[1]);
-            userService.updateUser("milo45","","hola.png");
+            userService.updatePhoto("milo45","hola.png");
 
             ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
             verify(userRepository).save(userCaptor.capture());
             User savedUser = userCaptor.getValue();
 
             assertEquals("hola.png",savedUser.getImagePath());
-            assertEquals("milo45",savedUser.getNickName());
 
 
             String[] updatedPhoto = userService.getUserInfo("milo45");
@@ -111,7 +127,7 @@ class UserServiceImplTest {
 
             verify(userRepository, times(3)).findByNickName("milo45");
 
-            userService.updateUser("milo45","milo46",null);
+            userService.updateNickName("milo45","milo46");
 
             assertEquals("milo46",savedUser.getNickName());
 
@@ -123,8 +139,6 @@ class UserServiceImplTest {
             assertNotEquals(oldInfo[0], updatedNickName[1]);
 
         }catch (UserException e){
-            fail(e.getMessage());
-        }catch (DuplicateKeyException e){
             fail(e.getMessage());
         }
     }
@@ -141,22 +155,53 @@ class UserServiceImplTest {
     }
 
     @Test
-    void shouldNotUpdateNickName(){
+    void shouldNotUpdateNullNickName(){
         try{
             User user = new User("casbsuw@mail.com", "milo45");
             when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-            userService.updateUser("milo45",null,"hola.png");
-            userService.updateUser("milo45","","hola.png");
+            userService.updateNickName("milo45",null);
 
-            assertEquals("hola.png",userService.getUserInfo("milo45")[1]);
-            assertEquals("milo45",userService.getUserInfo("milo45")[0]);
-            assertNotNull(userService.getUserInfo("milo45")[0]);
-
-            verify(userRepository, times(2)).save(any(User.class));
-            verify(userRepository, times(5)).findByNickName("milo45");
+            fail("Should have thrown exception");
 
         }catch (UserException e){
-            fail(e.getMessage());
+            assertEquals(UserException.NULL_VALUE,e.getMessage());
+            verify(userRepository, times(0)).save(any(User.class));
+
+        }
+    }
+
+    @Test
+    void shouldNotUpdateEmptyNickName(){
+        try{
+            User user = new User("casbsuw@mail.com", "milo45");
+            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
+            userService.updateNickName("milo45","");
+
+            fail("Should have thrown exception");
+
+        }catch (UserException e){
+            assertEquals(UserException.NULL_VALUE,e.getMessage());
+            verify(userRepository, times(0)).save(any(User.class));
+
+        }
+    }
+
+    @Test
+    void shouldNotUpdateDuplicatelNickName(){
+        try{
+            User user1 = new User("casbsuw@mail.com","milo45");
+            User user2 = new User("casbsuw@mail.com","milo46");
+
+            when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+
+            userService.updateNickName("milo45","milo46");
+
+            fail("No exception thrown");
+
+        }catch (UserException e){
+            assertEquals(UserException.NICK_NAME_FOUND,e.getMessage());
+            verify(userRepository, times(0)).save(any(User.class));
+
         }
     }
 
@@ -165,21 +210,14 @@ class UserServiceImplTest {
         try{
             User user = new User("casbsuw@mail.com", "milo45");
             when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-            userService.updateUser("milo45","milo46",null);
+            userService.updatePhoto("milo45",null);
 
-            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-
-            assertEquals("",userService.getUserInfo("milo46")[1]);
-            assertEquals("milo46",userService.getUserInfo("milo46")[0]);
-            assertNotNull(userService.getUserInfo("milo45")[1]);
-
-            verify(userRepository, times(1)).save(any(User.class));
-            verify(userRepository, times(2)).findByNickName("milo45");
-            verify(userRepository, times(2)).findByNickName("milo46");
+            fail("No exception thrown");
 
 
         }catch (UserException e){
-            fail(e.getMessage());
+            assertEquals(UserException.NULL_VALUE,e.getMessage());
+            verify(userRepository, times(0)).save(any(User.class));
         }
     }
 

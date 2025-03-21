@@ -3,18 +3,18 @@ package arsw.tamaltolimense.playermanager.service;
 import arsw.tamaltolimense.playermanager.exception.UserException;
 import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.model.User;
-import com.mongodb.DuplicateKeyException;
+
 
 
 import java.util.List;
 
 public interface UserService {
 
-    User registerUser(String email, String nickName) throws UserException, DuplicateKeyException;
+    User registerUser(String email, String nickName) throws UserException;
 
     int getUserBalance(String nickName) throws UserException;
 
-    String[] getUserInfo(String nickName) throws UserException,DuplicateKeyException;
+    String[] getUserInfo(String nickName) throws UserException;
 
     List<Bid> getBids(String nickName) throws UserException;
 
@@ -25,12 +25,15 @@ public interface UserService {
 
     void bet(String nickName, Bid bid) throws UserException;
 
-    User updateUser(String nickName, String newNickName, String photo) throws UserException,DuplicateKeyException;
 
+
+    User updatePhoto(String nickName, String photo) throws UserException;
+
+    User updateNickName(String nickName, String newNickName) throws UserException;
 
     void deleteUser(String nickName);
 
-    void cleanBids(String nickName) throws UserException;
+    User cleanBids(String nickName) throws UserException;
 
 
 

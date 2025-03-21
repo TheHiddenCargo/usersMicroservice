@@ -1,7 +1,6 @@
 package arsw.tamaltolimense.playermanager.model;
 
 import arsw.tamaltolimense.playermanager.exception.UserException;
-import com.mongodb.DuplicateKeyException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

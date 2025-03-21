@@ -18,6 +18,8 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {this.userService = userService;}
 
+
+
     @GetMapping("/{nickName}/balance")
     public ResponseEntity<Object> getUserBalance(@PathVariable("nickName") String nickName) {
         try{
@@ -87,16 +89,33 @@ public class UserController {
         }
     }
 
-    @PutMapping("/update/{nickName}")
+    @PutMapping("/update/nickname/{nickName}")
     public ResponseEntity<Object> nickName(@PathVariable("nickName") String nickName,
-                                      @RequestParam(value = "newNickName", required = false) String newNickName,
-                                      @RequestParam(value = "photo", required = false) String photo) {
+                                      @RequestParam(value = "newNickName") String newNickName) {
         try{
-            return new ResponseEntity<>(userService.updateUser(nickName,newNickName,photo),HttpStatus.OK);
+            return new ResponseEntity<>(userService.updateNickName(nickName,newNickName),HttpStatus.OK);
         }catch (UserException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/update/photo/{nickName}")
+    public ResponseEntity<Object> photo(@PathVariable("nickName") String nickName,
+                                           @RequestParam(value = "photo") String photo) {
+        try{
+            return new ResponseEntity<>(userService.updatePhoto(nickName,photo),HttpStatus.OK);
+        }catch (UserException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/update/clean/{nickName}")
+    public ResponseEntity<Object> cleanBets(@PathVariable("nickName") String nickName) {
+        try {
+
+            return new ResponseEntity<>(userService.cleanBids(nickName),HttpStatus.OK);
+        } catch (UserException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }catch(DuplicateKeyException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
@@ -108,15 +127,7 @@ public class UserController {
 
     }
 
-    @DeleteMapping("/cleanbets/{nickName}")
-    public ResponseEntity<Object> cleanBets(@PathVariable("nickName") String nickName) {
-        try {
-            userService.cleanBids(nickName);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
+
 
 
 }

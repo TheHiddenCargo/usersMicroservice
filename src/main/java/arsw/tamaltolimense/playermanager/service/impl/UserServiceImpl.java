@@ -5,7 +5,6 @@ import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.model.User;
 import arsw.tamaltolimense.playermanager.repository.UserRepository;
 import arsw.tamaltolimense.playermanager.service.UserService;
-import com.mongodb.DuplicateKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -37,10 +36,18 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User registerUser(String email, String nickName) throws UserException, DuplicateKeyException {
+    public User registerUser(String email, String nickName) throws UserException {
         if(nickName == null || nickName.isEmpty()) throw new UserException(UserException.NULL_VALUE);
         if(email == null || email.isEmpty()) throw new UserException(UserException.NULL_VALUE);
+        if(checkNickName(nickName)) throw new UserException(UserException.NICK_NAME_FOUND);
         return userRepository.save(new User(email,nickName));
+    }
+
+    private boolean checkNickName(String nickName){
+        for(User user : userRepository.findAll()){
+            if(user.getNickName().equals(nickName)) return true;
+        }
+        return false;
     }
 
 
@@ -96,11 +103,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String nickName, String newNickName, String photo) throws UserException,DuplicateKeyException {
+    public User updateNickName(String nickName, String newNickName) throws UserException {
+        if(newNickName == null || newNickName.isEmpty()) throw new UserException(UserException.NULL_VALUE);
+        if(!nickName.equals(newNickName) && checkNickName(newNickName)) throw new UserException(UserException.NICK_NAME_FOUND);
         User currentUser = this.getUser(nickName);
-        if(newNickName != null && !newNickName.equals(currentUser.getNickName()) && !newNickName.isEmpty()) currentUser.setNickName(newNickName);
-        if(photo != null && !photo.equals(currentUser.getImagePath())) currentUser.setImagePath(photo);
+        currentUser.setNickName(newNickName);
         return userRepository.save(currentUser);
+    }
+
+    @Override
+    public User updatePhoto(String nickname, String photo) throws UserException{
+        if(photo == null) throw new UserException(UserException.NULL_VALUE);
+        User user = this.getUser(nickname);
+        if(!photo.equals(user.getImagePath())) user.setImagePath(photo);
+
+        return userRepository.save(user);
     }
 
 
@@ -111,10 +128,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void cleanBids(String nickName) throws UserException{
+    public User cleanBids(String nickName) throws UserException{
         User currentUser = this.getUser(nickName);
         currentUser.cleanBids();
-        userRepository.save(currentUser);
+        return (userRepository.save(currentUser));
     }
 
 }
