@@ -22,7 +22,6 @@ public interface UserService {
 
     void withdraw(String nickName, int amount) throws UserException;
 
-    void bet(String nickName, int amount, String container) throws UserException;
 
     void bet(String nickName, Bid bid) throws UserException;
 

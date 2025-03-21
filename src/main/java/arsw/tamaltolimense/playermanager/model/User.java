@@ -35,8 +35,7 @@ public class User {
 
     private final List<Bid> bids;
 
-    public User(String email, String nickName) throws UserException, DuplicateKeyException {
-        if(nickName == null || nickName.isEmpty()) throw new UserException(UserException.NULL_VALUE);
+    public User(String email, String nickName){
         this.email = email;
         this.nickName = nickName;
         balance = 0;
@@ -57,10 +56,6 @@ public class User {
             default:
                 throw new UserException(UserException.INVALID_TRANSACTION);
         }
-    }
-
-    public void registerBet(String container, int amount) {
-        bids.add(new Bid(container, amount));
     }
 
     public void registerBet(Bid bid) {
@@ -86,10 +81,18 @@ public class User {
     public boolean equals(Object obj){
         if(obj == null || obj.getClass() != this.getClass()) return false;
         User user = (User) obj;
+        boolean equalBids = true;
+        if(this.bids.size() != user.bids.size()) return false;
+        for(int i = 0; i < this.bids.size(); i++){
+            if(!this.bids.get(i).equals(user.bids.get(i))){
+                equalBids = false;
+                break;
+            }
+        }
         return (this.nickName == null ? user.getNickName() == null : this.nickName.equals(user.getNickName()))
                 && (this.email == null ? user.getEmail() == null :this.email.equals(user.getEmail()))
                 && (this.balance == 0 ? user.getBalance() == 0 :this.balance == user.getBalance())
-                && bids.equals(user.getBids());
+                && equalBids;
     }
 
 }

@@ -27,22 +27,20 @@ public class UserServiceImpl implements UserService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    private void notifyBalanceChange(String nickName) throws UserException {
-        messagingTemplate.convertAndSend("/balance/" + nickName, this.getUserBalance(nickName));
+    private void notifyBalanceChange(User user){
+        messagingTemplate.convertAndSend("/balance/" + user.getNickName(), user.getBalance());
     }
 
-    private void notifyBidChange(String nickName, List<Bid> bids){
-        messagingTemplate.convertAndSend("/balance/" + nickName, bids);
+    private void notifyBidChange(User user){
+        messagingTemplate.convertAndSend("/balance/" + user.getNickName(), user.getBids());
     }
 
 
     @Override
     public User registerUser(String email, String nickName) throws UserException, DuplicateKeyException {
-        try{
-            return this.getUser(nickName);
-        }catch (UserException e){
-            return userRepository.save(new User(nickName,nickName));
-        }
+        if(nickName == null || nickName.isEmpty()) throw new UserException(UserException.NULL_VALUE);
+        if(email == null || email.isEmpty()) throw new UserException(UserException.NULL_VALUE);
+        return userRepository.save(new User(email,nickName));
     }
 
 
@@ -72,46 +70,36 @@ public class UserServiceImpl implements UserService {
     public void deposit(String nickName, int amount) throws UserException {
         User currentUser = this.getUser(nickName);
         currentUser.transaction(User.DEPOSIT,amount);
-        userRepository.save(currentUser);
-        notifyBalanceChange(nickName);
-
+        notifyBalanceChange(userRepository.save(currentUser));
     }
 
     @Override
     public void withdraw(String nickName, int amount) throws UserException {
         User currentUser = this.getUser(nickName);
         currentUser.transaction(User.WITHDRAW,amount);
-        userRepository.save(currentUser);
-        notifyBalanceChange(nickName);
-
+        notifyBalanceChange(userRepository.save(currentUser));
     }
+
+
+
 
     @Override
-    public void bet(String nickName, int amount, String container) throws UserException{
-        User currentUser = this.getUser(nickName);
-        this.registerBet(currentUser,new Bid(container,amount));
-    }
-
-    @Override
-    public void bet(String nickName, Bid bid) throws UserException{
-        User currentUser = this.getUser(nickName);
-        this.registerBet(currentUser,bid);
-    }
-
-
-    private void registerBet(User user, Bid bid) throws UserException {
-        if(bid.getAmount() <= 0) throw new UserException(UserException.NEGATIVE_VALUE);
+    public void bet(String nickname, Bid bid) throws UserException {
+        if(bid == null) throw new UserException(UserException.NULL_VALUE);
+        if(bid.getContainerId() == null || bid.getContainerId().isEmpty()) throw new UserException(UserException.NULL_CONTAINER);
+        User user = this.getUser(nickname);
+        user.transaction(User.WITHDRAW,bid.getAmount());
         user.registerBet(bid);
         userRepository.save(user);
-        notifyBalanceChange(user.getNickName());
-        notifyBidChange(user.getNickName(),user.getBids());
+        notifyBalanceChange(user);
+        notifyBidChange(user);
     }
 
     @Override
     public User updateUser(String nickName, String newNickName, String photo) throws UserException,DuplicateKeyException {
         User currentUser = this.getUser(nickName);
-        if(!newNickName.equals(currentUser.getNickName())) currentUser.setNickName(newNickName);
-        if(!photo.equals(currentUser.getImagePath())) currentUser.setImagePath(photo);
+        if(newNickName != null && !newNickName.equals(currentUser.getNickName()) && !newNickName.isEmpty()) currentUser.setNickName(newNickName);
+        if(photo != null && !photo.equals(currentUser.getImagePath())) currentUser.setImagePath(photo);
         return userRepository.save(currentUser);
     }
 

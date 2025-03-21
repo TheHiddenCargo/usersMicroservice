@@ -6,6 +6,7 @@ public class UserException extends Exception {
     public static final String NULL_VALUE = "Value can't be null";
     public static final String INVALID_TRANSACTION = "Invalid transaction";
     public static final String USER_NOT_FOUND = "User does not exist";
+    public static final String NULL_CONTAINER = "Container can't be null";
     public UserException(String message) {
         super(message);
     }

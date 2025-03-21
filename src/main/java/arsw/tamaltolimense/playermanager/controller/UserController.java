@@ -71,22 +71,10 @@ public class UserController {
         }
     }
 
+
+
     @PutMapping("/bet")
-    public ResponseEntity<Object> bet(@RequestParam("nickName") String nickName, @RequestParam("amount") int amount,
-                                 @RequestParam("container") String container) {
-        try {
-            userService.bet(nickName,amount,container);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch (UserException e){
-            if(e.getMessage().equals(UserException.USER_NOT_FOUND)) return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-            if(e.getMessage().equals(UserException.NEGATIVE_BALANCE)) return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-    @PutMapping("/bet/extra")
-    public ResponseEntity<Object> betq(@RequestParam("nickName") String nickName,@RequestBody Bid bid) {
+    public ResponseEntity<Object> bet(@RequestParam("nickName") String nickName,@RequestBody Bid bid) {
         try {
             userService.bet(nickName, bid);
             return new ResponseEntity<>(HttpStatus.OK);
