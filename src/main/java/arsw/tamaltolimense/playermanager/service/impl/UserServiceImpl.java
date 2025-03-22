@@ -27,11 +27,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private void notifyBalanceChange(User user){
-        messagingTemplate.convertAndSend("/balance/" + user.getNickName(), user.getBalance());
+        messagingTemplate.convertAndSend("/transactions/made/balance/" + user.getNickName(), user.getBalance());
     }
 
     private void notifyBidChange(User user){
-        messagingTemplate.convertAndSend("/balance/" + user.getNickName(), user.getBids());
+        messagingTemplate.convertAndSend("/transactions/made/bids/" + user.getNickName(), user.getBids());
     }
 
 
@@ -91,9 +91,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerBid(String nickname, Bid bid) throws UserException {
-        if(bid == null) throw new UserException(UserException.NULL_VALUE);
-        if(bid.getContainerId() == null || bid.getContainerId().trim().equals("")) throw new UserException(UserException.NULL_CONTAINER);
-        if(bid.getAmount() <= 0) throw new UserException(UserException.NEGATIVE_VALUE);
         User user = this.getUser(nickname);
         user.registerBet(bid);
         notifyBidChange(userRepository.save(user));

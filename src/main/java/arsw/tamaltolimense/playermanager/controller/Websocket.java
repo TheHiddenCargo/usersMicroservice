@@ -1,17 +1,16 @@
 package arsw.tamaltolimense.playermanager.controller;
 import arsw.tamaltolimense.playermanager.exception.UserException;
-import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
 
 @Controller
-public class Websocket {
+public class    Websocket {
 
 
     private UserService userService;
@@ -25,15 +24,22 @@ public class Websocket {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @MessageMapping("/balance.get")
-    public void getBalance(@Payload String email) throws UserException {
-        int balance = userService.getUserBalance(email);
-        messagingTemplate.convertAndSend("/balance/" + email, balance);
+    @MessageMapping("/getbalance")
+    public void getBalance(@Payload String nickname) {
+        try{
+            messagingTemplate.convertAndSend("/transactions/made/balance/" + nickname, userService.getUserBalance(nickname));
+        }catch (UserException e) {
+            messagingTemplate.convertAndSend("/transactions/made/balance/" + nickname, "User does not exist");
+        }
+
     }
 
-    @MessageMapping("/bids.get")
-    public void getBids(@Payload String email) throws UserException {
-        List<Bid> bids = userService.getBids(email);
-        messagingTemplate.convertAndSend("/bids/" + email, bids);
+    @MessageMapping("/getbids")
+    public void getBids(@Payload String nickname) {
+        try{
+            messagingTemplate.convertAndSend("/transactions/made/bids/" + nickname, userService.getBids(nickname));
+        }catch (UserException e) {
+            messagingTemplate.convertAndSend("/transactions/made/bids/" + nickname, "User does not exist");
+        }
     }
 }

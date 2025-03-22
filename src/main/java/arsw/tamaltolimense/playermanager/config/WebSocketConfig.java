@@ -11,14 +11,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/balance");
-        config.setApplicationDestinationPrefixes("/transactions");
+        //Prefijo para recibir info enviada por el usuario
+        config.enableSimpleBroker("/transactions/made");
+        //Prefijo para que el usuario pueda enviar info
+        config.setApplicationDestinationPrefixes("/transactions/make");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/user/balances")
-                .setAllowedOrigins("*")
-                .withSockJS();
+        registry.addEndpoint("/user/transactions");
     }
 }

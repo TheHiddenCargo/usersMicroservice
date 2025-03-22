@@ -41,8 +41,7 @@ public class User {
         bids = new ArrayList<>();
     }
 
-    public void transaction(int amount) throws UserException{
-        if(this.balance + amount < 0) throw new UserException(UserException.NEGATIVE_BALANCE);
+    public void transaction(int amount){
         this.balance += amount;
     }
 

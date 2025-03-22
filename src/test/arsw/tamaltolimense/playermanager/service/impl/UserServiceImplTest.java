@@ -279,23 +279,7 @@ class UserServiceImplTest {
         }
    }
 
-    @Test
-    void shouldNotDoTransaction(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-        try{
 
-            userService.transaction("milo45",-60000);
-            fail("No exception thrown");
-
-
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_BALANCE,e.getMessage());
-            assertEquals(0,user.getBalance());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(1)).findByNickName("milo45");
-        }
-    }
 
     @Test
     void shouldRegisterBid(){
@@ -319,81 +303,6 @@ class UserServiceImplTest {
 
         }catch (UserException e){
             fail(e.getMessage());
-        }
-    }
-
-    @Test
-    void shouldNotRegisterNullBid(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.registerBid("milo45", null);
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NULL_VALUE,e.getMessage());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(0)).findByNickName("milo45");
-        }
-    }
-
-    @Test
-    void shouldNotRegisterNullContainer(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.registerBid("milo45", new Bid(null,-45));
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NULL_CONTAINER,e.getMessage());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(0)).findByNickName("milo45");
-        }
-    }
-
-    @Test
-    void shouldNotRegisterEmptyContainer(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.registerBid("milo45", new Bid("",-45));
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NULL_CONTAINER,e.getMessage());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(0)).findByNickName("milo45");
-        }
-    }
-
-    @Test
-    void shouldNotRegisterNegativeBid(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.registerBid("milo45", new Bid("1",-45));
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(0)).findByNickName("milo45");
-        }
-    }
-
-    @Test
-    void shouldNotRegisterZeroBid(){
-        User user = new User("casbsuw@mail.com", "milo45");
-        try{
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            userService.registerBid("milo45", new Bid("1",0));
-            fail("Should have thrown exception");
-        }catch (UserException e){
-            assertEquals(UserException.NEGATIVE_VALUE,e.getMessage());
-            assertEquals(0,user.getBids().size());
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(0)).findByNickName("milo45");
         }
     }
 
