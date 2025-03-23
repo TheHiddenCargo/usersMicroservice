@@ -31,27 +31,18 @@ public class User {
 
     @Setter private String imagePath;
 
-    private final List<Bid> bids;
 
     public User(String email, String nickName){
         this.email = email;
         this.nickName = nickName;
         balance = 0;
         imagePath = "";
-        bids = new ArrayList<>();
     }
 
     public void transaction(int amount){
         this.balance += amount;
     }
 
-    public void registerBet(Bid bid) {
-        bids.add(bid);
-    }
-
-    public void cleanBids(){
-        bids.clear();
-    }
 
     @Override
     public int hashCode(){
@@ -60,7 +51,6 @@ public class User {
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((nickName == null) ? 0 : nickName.hashCode());
         result = prime * result + balance;
-        result = prime * result + bids.hashCode();
         return result;
     }
 
@@ -68,18 +58,10 @@ public class User {
     public boolean equals(Object obj){
         if(obj == null || obj.getClass() != this.getClass()) return false;
         User user = (User) obj;
-        boolean equalBids = true;
-        if(this.bids.size() != user.bids.size()) return false;
-        for(int i = 0; i < this.bids.size(); i++){
-            if(!this.bids.get(i).equals(user.bids.get(i))){
-                equalBids = false;
-                break;
-            }
-        }
+
         return (this.nickName == null ? user.getNickName() == null : this.nickName.equals(user.getNickName()))
                 && (this.email == null ? user.getEmail() == null :this.email.equals(user.getEmail()))
-                && (this.balance == 0 ? user.getBalance() == 0 :this.balance == user.getBalance())
-                && equalBids;
+                && (this.balance == 0 ? user.getBalance() == 0 :this.balance == user.getBalance());
     }
 
 }

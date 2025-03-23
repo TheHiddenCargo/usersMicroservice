@@ -1,7 +1,6 @@
 package arsw.tamaltolimense.playermanager.controller;
 
 import arsw.tamaltolimense.playermanager.exception.UserException;
-import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

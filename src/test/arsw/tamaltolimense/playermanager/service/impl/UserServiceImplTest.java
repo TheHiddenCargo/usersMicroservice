@@ -1,7 +1,6 @@
 package arsw.tamaltolimense.playermanager.service.impl;
 
 import arsw.tamaltolimense.playermanager.exception.UserException;
-import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.model.User;
 import arsw.tamaltolimense.playermanager.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

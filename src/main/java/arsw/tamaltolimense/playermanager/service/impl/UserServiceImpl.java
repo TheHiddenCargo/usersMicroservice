@@ -1,7 +1,6 @@
 package arsw.tamaltolimense.playermanager.service.impl;
 
 import arsw.tamaltolimense.playermanager.exception.UserException;
-import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.model.User;
 import arsw.tamaltolimense.playermanager.repository.UserRepository;
 import arsw.tamaltolimense.playermanager.service.UserService;
@@ -18,20 +17,10 @@ public class UserServiceImpl implements UserService {
 
 
     private UserRepository userRepository;
-    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, SimpMessagingTemplate messagingTemplate) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.messagingTemplate = messagingTemplate;
-    }
-
-    private void notifyBalanceChange(User user){
-        messagingTemplate.convertAndSend("/transactions/made/balance/" + user.getNickName(), user.getBalance());
-    }
-
-    private void notifyBidChange(User user){
-        messagingTemplate.convertAndSend("/transactions/made/bids/" + user.getNickName(), user.getBids());
     }
 
 
@@ -76,25 +65,16 @@ public class UserServiceImpl implements UserService {
         return this.getUser(nickName).getBalance();
     }
 
-    @Override
-    public List<Bid> getBids(String nickName) throws UserException{
-        return this.getUser(nickName).getBids();
-    }
+
 
     @Override
     public void transaction(String nickName, int amount) throws UserException {
         User currentUser = this.getUser(nickName);
         currentUser.transaction(amount);
-        notifyBalanceChange(userRepository.save(currentUser));
     }
 
 
-    @Override
-    public void registerBid(String nickname, Bid bid) throws UserException {
-        User user = this.getUser(nickname);
-        user.registerBet(bid);
-        notifyBidChange(userRepository.save(user));
-    }
+
 
     @Override
     public User updateNickName(String nickName, String newNickName) throws UserException {
@@ -121,11 +101,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteByNickName(nickName);
     }
 
-    @Override
-    public User cleanBids(String nickName) throws UserException{
-        User currentUser = this.getUser(nickName);
-        currentUser.cleanBids();
-        return (userRepository.save(currentUser));
-    }
+
+
 
 }
