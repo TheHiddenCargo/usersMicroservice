@@ -5,12 +5,8 @@ import arsw.tamaltolimense.playermanager.model.User;
 import arsw.tamaltolimense.playermanager.repository.UserRepository;
 import arsw.tamaltolimense.playermanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,7 +18,6 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 
     @Override
     public User registerUser(String email, String nickName) throws UserException {
@@ -66,14 +61,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public void transaction(String nickName, int amount) throws UserException {
         User currentUser = this.getUser(nickName);
         currentUser.transaction(amount);
+        userRepository.save(currentUser);
     }
-
-
 
 
     @Override
@@ -95,12 +88,10 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public void deleteUser(String nickName){
         userRepository.deleteByNickName(nickName);
     }
-
 
 
 

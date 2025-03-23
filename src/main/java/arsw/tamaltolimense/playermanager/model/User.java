@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 import lombok.Getter;
@@ -31,7 +32,6 @@ public class User {
 
     @Setter private String imagePath;
 
-
     public User(String email, String nickName){
         this.email = email;
         this.nickName = nickName;
@@ -42,7 +42,6 @@ public class User {
     public void transaction(int amount){
         this.balance += amount;
     }
-
 
     @Override
     public int hashCode(){
@@ -58,7 +57,6 @@ public class User {
     public boolean equals(Object obj){
         if(obj == null || obj.getClass() != this.getClass()) return false;
         User user = (User) obj;
-
         return (this.nickName == null ? user.getNickName() == null : this.nickName.equals(user.getNickName()))
                 && (this.email == null ? user.getEmail() == null :this.email.equals(user.getEmail()))
                 && (this.balance == 0 ? user.getBalance() == 0 :this.balance == user.getBalance());

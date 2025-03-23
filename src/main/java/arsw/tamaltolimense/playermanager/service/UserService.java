@@ -5,6 +5,8 @@ import arsw.tamaltolimense.playermanager.model.User;
 
 
 
+
+
 public interface UserService {
 
     User registerUser(String email, String nickName) throws UserException;
@@ -12,7 +14,6 @@ public interface UserService {
     int getUserBalance(String nickName) throws UserException;
 
     String[] getUserInfo(String nickName) throws UserException;
-
 
     void transaction(String nickName, int amount) throws UserException;
 
