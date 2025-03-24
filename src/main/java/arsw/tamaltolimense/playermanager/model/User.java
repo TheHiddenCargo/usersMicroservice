@@ -35,7 +35,7 @@ public class User {
     public User(String email, String nickName){
         this.email = email;
         this.nickName = nickName;
-        balance = 0;
+        balance = 5000;
         imagePath = "";
     }
 

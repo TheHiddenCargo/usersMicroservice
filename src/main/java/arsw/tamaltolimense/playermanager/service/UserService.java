@@ -19,4 +19,6 @@ public interface UserService {
     User updateNickName(String nickName, String newNickName) throws UserException;
 
     void deleteUser(String nickName);
+
+    User getUserByEmail(String email) throws UserException;
 }

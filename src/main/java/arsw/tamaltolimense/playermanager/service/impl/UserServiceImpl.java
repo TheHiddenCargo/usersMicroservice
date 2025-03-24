@@ -18,6 +18,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByEmail(String email) throws UserException {
+        // O, si usaste findByEmail, podrías hacerlo de la siguiente forma:
+        User user = userRepository.findByEmail(email);
+        if(user == null) throw new UserException(UserException.USER_NOT_FOUND);
+        return user;
+    }
+
+    @Override
     public User registerUser(String email, String nickName) throws UserException {
         if(nickName == null || nickName.trim().equals(""))
             throw new UserException(UserException.NULL_VALUE);
