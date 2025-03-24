@@ -1,7 +1,6 @@
 package arsw.tamaltolimense.playermanager.service.impl;
 
 import arsw.tamaltolimense.playermanager.exception.UserException;
-import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.model.User;
 import arsw.tamaltolimense.playermanager.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -278,59 +277,5 @@ class UserServiceImplTest {
             fail(e.getMessage());
         }
    }
-
-
-
-    @Test
-    void shouldRegisterBid(){
-        try{
-            User user = new User("casbsuw@mail.com", "milo45");
-            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-            when(userRepository.save(any(User.class))).thenReturn(user);
-            userService.registerBid("milo45", new Bid("1",5000));
-            userService.registerBid("milo45", new Bid("1",5000));
-            userService.registerBid("milo45", new Bid("1",5000));
-
-
-            assertEquals(3,userService.getBids("milo45").size());
-            assertEquals("1",userService.getBids("milo45").getFirst().getContainerId());
-            assertEquals(5000,userService.getBids("milo45").getLast().getAmount());
-
-            verify(userRepository, times(3)).save(any(User.class));
-            verify(userRepository, times(6)).findByNickName("milo45");
-
-
-
-        }catch (UserException e){
-            fail(e.getMessage());
-        }
-    }
-
-    @Test
-    void shouldCleanBids(){
-        try{
-            User user = new User("casbsuw@mail.com", "milo45");
-            when(userRepository.findByNickName("milo45")).thenReturn(user);
-            when(userRepository.save(any(User.class))).thenReturn(user);
-
-            userService.registerBid("milo45",new Bid("1",5000));
-            userService.registerBid("milo45",new Bid("1",5000));
-            userService.registerBid("milo45",new Bid("1",5000));
-
-            userService.cleanBids("milo45");
-
-            assertEquals(0, userService.getBids("milo45").size());
-
-
-
-            verify(userRepository, times(4)).save(any(User.class));
-            verify(userRepository, times(5)).findByNickName("milo45");
-
-        }catch (UserException e){
-            fail(e.getMessage());
-        }
-    }
-
-
 
 }

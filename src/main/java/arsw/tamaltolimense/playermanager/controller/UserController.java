@@ -1,7 +1,6 @@
 package arsw.tamaltolimense.playermanager.controller;
 
 import arsw.tamaltolimense.playermanager.exception.UserException;
-import arsw.tamaltolimense.playermanager.model.Bid;
 import arsw.tamaltolimense.playermanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +38,7 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
-
+    /**
     @PutMapping("/bids")
     public ResponseEntity<Object> registerBid(@RequestParam("nickname") String nickName, @RequestBody Bid bid){
         try{
@@ -49,17 +48,7 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
-    @PutMapping("/transactions")
-    public ResponseEntity<Object> deposit(@RequestParam("nickName") String nickName, @RequestParam("amount") int amount) {
-        try{
-            userService.transaction(nickName,amount);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch(UserException e){
-            if(e.getMessage().equals(UserException.USER_NOT_FOUND)) return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        }
-    }
+     **/
 
 
 
@@ -81,16 +70,6 @@ public class UserController {
             return new ResponseEntity<>(userService.updatePhoto(nickName,photo),HttpStatus.OK);
         }catch (UserException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PutMapping("/update/clean/{nickName}")
-    public ResponseEntity<Object> cleanBets(@PathVariable("nickName") String nickName) {
-        try {
-
-            return new ResponseEntity<>(userService.cleanBids(nickName),HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
