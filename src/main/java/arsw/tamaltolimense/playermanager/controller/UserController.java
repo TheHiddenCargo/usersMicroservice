@@ -1,87 +1,74 @@
 package arsw.tamaltolimense.playermanager.controller;
 
 import arsw.tamaltolimense.playermanager.exception.UserException;
+import arsw.tamaltolimense.playermanager.model.User;
 import arsw.tamaltolimense.playermanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("users/")
+@RequestMapping("users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {this.userService = userService;}
-
-
-
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/{nickName}/info")
     public ResponseEntity<Object> getUserInfo(@PathVariable("nickName") String nickName) {
-        try{
-            return new ResponseEntity<>(userService.getUserInfo(nickName),HttpStatus.OK);
-        }catch (UserException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        try {
+            User user = userService.getUserInfo(nickName);
+            return ResponseEntity.ok(user);
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
-
 
     @PostMapping("/register")
-    public ResponseEntity<Object> registerUser(@RequestParam("email") String email, @RequestParam("nickName") String nickName) {
-        try{
-            return new ResponseEntity<>(userService.registerUser(email,nickName), HttpStatus.CREATED);
-        }catch(UserException e) {
-            if(e.getMessage().equals(UserException.NULL_VALUE)) return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    public ResponseEntity<Object> registerUser(@RequestBody Map<String, String> userData) {
+        try {
+            String email = userData.get("email");
+            String nickName = userData.get("nickName");
+            User user = userService.registerUser(email, nickName);
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        } catch (UserException e) {
+            HttpStatus status = e.getMessage().equals(UserException.NULL_VALUE) ? HttpStatus.BAD_REQUEST : HttpStatus.CONFLICT;
+            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
         }
     }
-    /**
-    @PutMapping("/bids")
-    public ResponseEntity<Object> registerBid(@RequestParam("nickname") String nickName, @RequestBody Bid bid){
-        try{
-            userService.registerBid(nickName,bid);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }catch(UserException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-     **/
-
-
-
 
     @PutMapping("/update/nickname/{nickName}")
-    public ResponseEntity<Object> nickName(@PathVariable("nickName") String nickName,
-                                      @RequestParam(value = "newNickName") String newNickName) {
-        try{
-            return new ResponseEntity<>(userService.updateNickName(nickName,newNickName),HttpStatus.OK);
-        }catch (UserException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> updateNickName(@PathVariable("nickName") String nickName, @RequestBody Map<String, String> data) {
+        try {
+            String newNickName = data.get("newNickName");
+            User updatedUser = userService.updateNickName(nickName, newNickName);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
 
     @PutMapping("/update/photo/{nickName}")
-    public ResponseEntity<Object> photo(@PathVariable("nickName") String nickName,
-                                           @RequestParam(value = "photo") String photo) {
-        try{
-            return new ResponseEntity<>(userService.updatePhoto(nickName,photo),HttpStatus.OK);
-        }catch (UserException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> updatePhoto(@PathVariable("nickName") String nickName, @RequestBody Map<String, String> data) {
+        try {
+            String photo = data.get("photo");
+            User updatedUser = userService.updatePhoto(nickName, photo);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
 
     @DeleteMapping("/delete/{nickName}")
-    public ResponseEntity<Object> delete(@PathVariable("nickName") String nickName) {
+    public ResponseEntity<Object> deleteUser(@PathVariable("nickName") String nickName) {
         userService.deleteUser(nickName);
-        return new ResponseEntity<>(HttpStatus.OK);
-
-
+        return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
     }
-
-
-
-
 }
