@@ -1,0 +1,10 @@
+arsw\tamaltolimense\playermanager\config\SwaggerConfig.class
+arsw\tamaltolimense\playermanager\exception\UserException.class
+arsw\tamaltolimense\playermanager\config\WebSocketConfig.class
+arsw\tamaltolimense\playermanager\controller\WebSocketTransactions.class
+arsw\tamaltolimense\playermanager\service\UserService.class
+arsw\tamaltolimense\playermanager\PlayerManager.class
+arsw\tamaltolimense\playermanager\repository\UserRepository.class
+arsw\tamaltolimense\playermanager\service\impl\UserServiceImpl.class
+arsw\tamaltolimense\playermanager\controller\UserController.class
+arsw\tamaltolimense\playermanager\model\User.class
