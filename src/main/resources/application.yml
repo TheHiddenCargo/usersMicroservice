@@ -3,6 +3,5 @@ spring:
     name: userService
   data:
     mongodb:
-      uri: mongodb+srv://ccastano41:EndGame2019@fatum.brnvy.mongodb.net/?retryWrites=true&w=majority&appName=FATUM;
-      database: the_hidden_cargo
+      uri: mongodb+srv://ccastano41:EndGame2019@cluster0.brnvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
