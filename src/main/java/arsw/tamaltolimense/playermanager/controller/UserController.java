@@ -79,9 +79,9 @@ public class UserController {
     public ResponseEntity<Object> getUserByEmail(@PathVariable("email") String email) {
         try {
             User user = userService.getUserByEmail(email);
-            return ResponseEntity.ok(user);
+            return new ResponseEntity<>(user,HttpStatus.OK);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
 }
