@@ -31,6 +31,8 @@ public class UserServiceImpl implements UserService {
             throw new UserException(UserException.NULL_VALUE);
         if(email == null || email.trim().equals(""))
             throw new UserException(UserException.NULL_VALUE);
+        if(icon == null || icon.trim().equals("")) throw new UserException(UserException.NULL_VALUE);
+        if(balance < 0) throw new UserException(UserException.NULL_VALUE);
         if(checkNickName(nickName))
             throw new UserException(UserException.NICK_NAME_FOUND);
         if(checkEmail(email))

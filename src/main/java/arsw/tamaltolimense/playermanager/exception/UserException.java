@@ -6,6 +6,7 @@ public class UserException extends Exception {
     public static final String NICK_NAME_FOUND = "Nickname already exist";
     public static final String EMAIL_FOUND = "Email already exist";
     public static final String NULL_NICK_NAME= "Nickname can't be null";
+    public static final String NEGATIVE_BALANCE = "Negative balance";
     public UserException(String message) {
         super(message);
     }
