@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(String email, String nickName) throws UserException {
+    public User registerUser(String email, String nickName, int balance, String icon) throws UserException {
         if(nickName == null || nickName.trim().equals(""))
             throw new UserException(UserException.NULL_VALUE);
         if(email == null || email.trim().equals(""))
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
             throw new UserException(UserException.NICK_NAME_FOUND);
         if(checkEmail(email))
             throw new UserException(UserException.EMAIL_FOUND);
-        return userRepository.save(new User(email, nickName));
+        return userRepository.save(new User(email, nickName,balance,icon));
     }
 
     private boolean checkNickName(String nickName){

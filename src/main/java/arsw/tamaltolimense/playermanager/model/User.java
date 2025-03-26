@@ -32,11 +32,11 @@ public class User {
 
     @Setter private String imagePath;
 
-    public User(String email, String nickName){
+    public User(String email, String nickName, int balance, String imagePath){
         this.email = email;
         this.nickName = nickName;
-        balance = 5000;
-        imagePath = "";
+        this.balance = balance;
+        this.imagePath = imagePath;
     }
 
     public void transaction(int amount){

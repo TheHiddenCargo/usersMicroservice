@@ -5,7 +5,7 @@ import arsw.tamaltolimense.playermanager.model.User;
 
 public interface UserService {
 
-    User registerUser(String email, String nickName) throws UserException;
+    User registerUser(String email, String nickName,int balance, String icon) throws UserException;
 
     int getUserBalance(String nickName) throws UserException;
 

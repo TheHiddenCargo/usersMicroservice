@@ -15,6 +15,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private static final String ERROR = "error";
 
     @Autowired
     public UserController(UserService userService) {
@@ -27,7 +28,7 @@ public class UserController {
             User user = userService.getUserInfo(nickName);
             return ResponseEntity.ok(user);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
         }
     }
 
@@ -36,11 +37,13 @@ public class UserController {
         try {
             String email = userData.get("email");
             String nickName = userData.get("nickName");
-            User user = userService.registerUser(email, nickName);
+            int balance = Integer.parseInt(userData.get("balance"));
+            String icon = userData.get("icon");
+            User user = userService.registerUser(email, nickName, balance, icon);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (UserException e) {
             HttpStatus status = e.getMessage().equals(UserException.NULL_VALUE) ? HttpStatus.BAD_REQUEST : HttpStatus.CONFLICT;
-            return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(status).body(Map.of(ERROR, e.getMessage()));
         }
     }
 
@@ -51,7 +54,7 @@ public class UserController {
             User updatedUser = userService.updateNickName(nickName, newNickName);
             return ResponseEntity.ok(updatedUser);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
         }
     }
 
@@ -62,7 +65,7 @@ public class UserController {
             User updatedUser = userService.updatePhoto(nickName, photo);
             return ResponseEntity.ok(updatedUser);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
         }
     }
 
@@ -78,7 +81,7 @@ public class UserController {
             User user = userService.getUserByEmail(email);
             return ResponseEntity.ok(user);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
         }
     }
 }
