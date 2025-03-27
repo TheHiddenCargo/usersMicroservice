@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updatePhoto(String nickname, String photo) throws UserException{
-        if(photo == null)
+        if(photo == null || photo.trim().equals(""))
             throw new UserException(UserException.NULL_VALUE);
         User user = this.getUser(nickname);
         if(!photo.equals(user.getImagePath()))
