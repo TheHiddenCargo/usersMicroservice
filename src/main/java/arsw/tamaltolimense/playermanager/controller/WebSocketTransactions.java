@@ -32,4 +32,13 @@ public class WebSocketTransactions {
             return 0;
         }
     }
+    @MessageMapping("/balance/{nickName}")
+    @SendTo("transactions/made/{nickName}")
+    public int getBalance(@DestinationVariable String nickName){
+        try{
+            return userService.getUserBalance(nickName);
+        }catch (UserException e) {
+            return 0;
+        }
+    }
 }
