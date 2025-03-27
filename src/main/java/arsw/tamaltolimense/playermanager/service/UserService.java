@@ -3,6 +3,8 @@ package arsw.tamaltolimense.playermanager.service;
 import arsw.tamaltolimense.playermanager.exception.UserException;
 import arsw.tamaltolimense.playermanager.model.User;
 
+import java.util.Map;
+
 public interface UserService {
 
     User registerUser(String email, String nickName,int balance, String icon) throws UserException;
@@ -10,7 +12,7 @@ public interface UserService {
     int getUserBalance(String nickName) throws UserException;
 
     // Cambiamos para que retorne User en lugar de String[]
-    User getUserInfo(String nickName) throws UserException;
+    Map<String,String> getUserInfo(String nickName) throws UserException;
 
     void transaction(String nickName, int amount) throws UserException;
 

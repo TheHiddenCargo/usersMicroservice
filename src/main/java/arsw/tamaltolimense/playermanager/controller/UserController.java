@@ -25,8 +25,8 @@ public class UserController {
     @GetMapping("/{nickName}/info")
     public ResponseEntity<Object> getUserInfo(@PathVariable("nickName") String nickName) {
         try {
-            User user = userService.getUserInfo(nickName);
-            return ResponseEntity.ok(user);
+            Map<String,String> userInfo = userService.getUserInfo(nickName);
+            return ResponseEntity.ok(userInfo);
         } catch (UserException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
         }

@@ -7,6 +7,9 @@ import arsw.tamaltolimense.playermanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -64,8 +67,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserInfo(String nickName) throws UserException {
-        return this.getUser(nickName);
+    public Map<String,String> getUserInfo(String nickName) throws UserException {
+        User currentUser = getUser(nickName);
+        Map<String,String> userInfo = new HashMap<>();
+        userInfo.put("nickName", currentUser.getNickName());
+        userInfo.put("photo", currentUser.getImagePath());
+        return userInfo;
     }
 
     @Override
