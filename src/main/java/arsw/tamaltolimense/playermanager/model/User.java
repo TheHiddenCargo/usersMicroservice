@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 import lombok.Getter;
@@ -23,14 +25,19 @@ public class User {
 
     @Id
     @NotNull
+
     private final String email;
 
+    @Setter
     @Indexed(unique = true)
-    @Setter private String nickName;
+    private String nickName;
 
     private int balance;
 
-    @Setter private String imagePath;
+    @Setter
+    private String imagePath;
+
+
 
     public User(String email, String nickName, int balance, String imagePath){
         this.email = email;
@@ -41,6 +48,8 @@ public class User {
 
     public void transaction(int amount){
         this.balance += amount;
+
+
     }
 
     @Override

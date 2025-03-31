@@ -75,13 +75,5 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
     }
 
-    @GetMapping("/email/{email}/info")
-    public ResponseEntity<Object> getUserByEmail(@PathVariable("email") String email) {
-        try {
-            User user = userService.getUserByEmail(email);
-            return new ResponseEntity<>(user,HttpStatus.OK);
-        } catch (UserException e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }
-    }
+
 }

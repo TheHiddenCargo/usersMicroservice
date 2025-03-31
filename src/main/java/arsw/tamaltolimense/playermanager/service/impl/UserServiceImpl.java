@@ -10,23 +10,17 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 @Service
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
-
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public User getUserByEmail(String email) throws UserException {
-        // O, si usaste findByEmail, podrías hacerlo de la siguiente forma:
-        User user = userRepository.findByEmail(email);
-        if(user == null) throw new UserException(UserException.USER_NOT_FOUND);
-        return user;
-    }
 
     @Override
     public User registerUser(String email, String nickName, int balance, String icon) throws UserException {
@@ -59,57 +53,60 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    private User getUser(String nickName) throws UserException {
-        User currentUser = userRepository.findByNickName(nickName.toLowerCase());
-        if(currentUser == null)
-            throw new UserException(UserException.USER_NOT_FOUND);
-        return currentUser;
+    private User getUser(String email) throws UserException {
+        User user = userRepository.findByEmail(email);
+        if(user == null) throw new UserException(UserException.USER_NOT_FOUND);
+        return user;
     }
 
     @Override
-    public Map<String,String> getUserInfo(String nickName) throws UserException {
-        User currentUser = getUser(nickName);
+    public Map<String,String> getUserInfo(String email) throws UserException {
+        User currentUser = getUser(email);
         Map<String,String> userInfo = new HashMap<>();
-        userInfo.put("nickName", currentUser.getNickName());
+        userInfo.put("nickname", currentUser.getNickName());
         userInfo.put("photo", currentUser.getImagePath());
         return userInfo;
     }
 
     @Override
-    public int getUserBalance(String nickName) throws UserException {
-        return this.getUser(nickName).getBalance();
+    public int getUserBalance(String email) throws UserException {
+        return this.getUser(email).getBalance();
     }
 
     @Override
-    public void transaction(String nickName, int amount) throws UserException {
-        User currentUser = this.getUser(nickName);
+    public void transaction(String email, int amount) throws UserException {
+        User currentUser = this.getUser(email);
+        int balance = currentUser.getBalance();
+        if(balance + amount < 0) throw new UserException(UserException.NEGATIVE_BALANCE);
         currentUser.transaction(amount);
         userRepository.save(currentUser);
     }
 
     @Override
-    public User updateNickName(String nickName, String newNickName) throws UserException {
-        if(newNickName == null || newNickName.trim().equals(""))
-            throw new UserException(UserException.NULL_NICK_NAME);
-        if(!nickName.equals(newNickName) && checkNickName(newNickName))
-            throw new UserException(UserException.NICK_NAME_FOUND);
-        User currentUser = this.getUser(nickName);
+    public User updateNickName(String email, String newNickName) throws UserException {
+        String currentNickName = getUserInfo(email).get("nickname");
+
+        if(newNickName == null || newNickName.trim().equals("")) throw new UserException(UserException.NULL_NICK_NAME);
+        if(!currentNickName.equals(newNickName) && checkNickName(newNickName)) throw new UserException(UserException.NICK_NAME_FOUND);
+        User currentUser = this.getUser(email);
         currentUser.setNickName(newNickName);
         return userRepository.save(currentUser);
     }
 
     @Override
-    public User updatePhoto(String nickname, String photo) throws UserException{
-        if(photo == null || photo.trim().equals(""))
-            throw new UserException(UserException.NULL_VALUE);
-        User user = this.getUser(nickname);
-        if(!photo.equals(user.getImagePath()))
+    public User updatePhoto(String email, String photo) throws UserException{
+        if(photo == null || photo.trim().equals("")) throw new UserException(UserException.NULL_VALUE);
+        User user = this.getUser(email);
+        if(!photo.equals(getUserInfo(email).get("photo"))){
             user.setImagePath(photo);
-        return userRepository.save(user);
+            user = userRepository.save(user);
+        }
+        return user;
+
     }
 
     @Override
-    public void deleteUser(String nickName){
-        userRepository.deleteByNickName(nickName);
+    public void deleteUser(String email){
+        userRepository.deleteByEmail(email);
     }
 }

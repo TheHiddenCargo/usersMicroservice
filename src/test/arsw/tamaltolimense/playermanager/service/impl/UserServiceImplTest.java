@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import java.util.Arrays;
 import java.util.Map;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -39,7 +40,7 @@ class UserServiceImplTest {
             User user = new User("casbsuw@mail.com","milo45",5000,"imagen");
             when(userRepository.save(any(User.class))).thenReturn(user);
 
-            User registeredUser = userService.registerUser("casbsuw@mail.com","milo45",500,"imaen");
+            User registeredUser = userService.registerUser("casbsuw@mail.com","milo45",500,"imagen");
 
             assertNotNull(registeredUser);
             assertEquals(new User("casbsuw@mail.com","milo45",5000,"imagen"), registeredUser);
@@ -137,43 +138,41 @@ class UserServiceImplTest {
             assertEquals(UserException.NULL_VALUE,e.getMessage());
         }
     }
+    
+    @Test
+    void shouldNotRegisterNegativeBalance(){
+        try{
+            userService.registerUser(" ssdbdbd","hola",-5000,"isismdnj");
+            fail("Should have thrown exception");
+        }catch (UserException e){
+            assertEquals(UserException.NEGATIVE_BALANCE,e.getMessage());
+        }
+    }
 
 
     @Test
     void shouldInfoUser(){
         try{
             User user = new User("casbsuw@mail.com", "milo45",7000,"imagen");
-            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-            Map<String,String> oldInfo = userService.getUserInfo("milo45");
-            assertNotNull(oldInfo);
-            assertEquals("milo45", oldInfo.get("nickName"));
-            userService.updatePhoto("milo45","hola.png");
+            when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
 
-            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-            verify(userRepository).save(userCaptor.capture());
-            User savedUser = userCaptor.getValue();
+            Map<String,String> oldInfo= userService.getUserInfo(user.getEmail());
 
-            assertEquals("hola.png",savedUser.getImagePath());
+            assertEquals("milo45",oldInfo.get("nickname"));
+            assertEquals("imagen",oldInfo.get("photo"));
+
+            userService.updateNickName("casbsuw@mail.com","ccastano47");
+            userService.updatePhoto("casbsuw@mail.com","chao");
+
+            oldInfo = userService.getUserInfo(user.getEmail());
+
+            assertEquals("ccastano47",oldInfo.get("nickname"));
+            assertEquals("chao",oldInfo.get("photo"));
+
+            verify(userRepository, times(6)).findByEmail("casbsuw@mail.com");
+            verify(userRepository, times(2)).save(any(User.class));
 
 
-            Map<String,String> updatedPhoto = userService.getUserInfo("milo45");
-            assertNotNull(updatedPhoto);
-            assertEquals("hola.png", updatedPhoto.get("photo"));
-            assertEquals(oldInfo.get("nickName"), updatedPhoto.get("nickName"));
-            assertNotEquals(oldInfo.get("photo"), updatedPhoto.get("photo"));
-
-            verify(userRepository, times(3)).findByNickName("milo45");
-
-            userService.updateNickName("milo45","milo46");
-
-            assertEquals("milo46",savedUser.getNickName());
-
-            when(userRepository.findByNickName("milo46")).thenReturn(user);
-            Map<String,String> updatedNickName = userService.getUserInfo("milo46");
-            assertNotNull(updatedNickName);
-            assertEquals("milo46", updatedNickName.get("nickName"));
-            assertEquals(updatedPhoto.get("photo"), updatedNickName.get("photo"));
-            assertNotEquals(oldInfo.get("nickName"), updatedNickName.get("photo"));
 
         }catch (UserException e){
             fail(e.getMessage());
@@ -183,8 +182,8 @@ class UserServiceImplTest {
     @Test
     void shouldNotFindUser(){
         try{
-            userService.getUserInfo("milo45");
-            verify(userRepository, times(1)).findByNickName("milo45");
+            userService.getUserInfo("casbsuw@mail.com");
+            verify(userRepository, times(1)).findByEmail("casbsuw@mail.com");
             fail("Should have thrown exception");
         }catch (UserException e){
             assertEquals(UserException.USER_NOT_FOUND,e.getMessage());
@@ -195,8 +194,8 @@ class UserServiceImplTest {
     void shouldNotUpdateNullNickName(){
         try{
             User user = new User("casbsuw@mail.com", "milo45",500,"image");
-            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-            userService.updateNickName("milo45",null);
+            when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
+            userService.updateNickName("casbsuw@mail.com",null);
 
             fail("Should have thrown exception");
 
@@ -211,8 +210,8 @@ class UserServiceImplTest {
     void shouldNotUpdateEmptyNickName(){
         try{
             User user = new User("casbsuw@mail.com", "milo45",500,"image");
-            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
-            userService.updateNickName("milo45","");
+            when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
+            userService.updateNickName("casbsuw@mail.com","");
 
             fail("Should have thrown exception");
 
@@ -228,10 +227,11 @@ class UserServiceImplTest {
         try{
             User user1 = new User("casbsuw@mail.com","milo45",5000,"image");
             User user2 = new User("casbsuw@mail.com","milo46",5000,"imagen");
+            when(userRepository.findByEmail(user1.getEmail())).thenReturn(user1);
 
             when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
-            userService.updateNickName("milo45","milo46");
+            userService.updateNickName("casbsuw@mail.com","milo46");
 
             fail("No exception thrown");
 
@@ -246,7 +246,7 @@ class UserServiceImplTest {
     void shouldNotUpdatePhoto(){
         try{
             User user = new User("casbsuw@mail.com", "milo45",500,"image");
-            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
+            when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
             userService.updatePhoto("milo45",null);
 
             fail("No exception thrown");
@@ -262,19 +262,122 @@ class UserServiceImplTest {
    void shouldDoTransaction(){
         try{
             User user = new User("casbsuw@mail.com", "milo45",500,"image");
-            when(userRepository.findByNickName(user.getNickName())).thenReturn(user);
+            when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
             when(userRepository.save(any(User.class))).thenReturn(user);
-            userService.transaction("milo45",50000);
-            userService.transaction("milo45",-10000);
+            userService.transaction("casbsuw@mail.com",50000);
+            userService.transaction("casbsuw@mail.com",-10000);
 
-            assertEquals(40500,userService.getUserBalance("milo45"));
+            assertEquals(40500,userService.getUserBalance("casbsuw@mail.com"));
 
             verify(userRepository, times(2)).save(any(User.class));
-            verify(userRepository, times(3)).findByNickName("milo45");
+            verify(userRepository, times(3)).findByEmail("casbsuw@mail.com");
 
         }catch (UserException e){
             fail(e.getMessage());
         }
+   }
+
+   @Test
+    void shouldUpdateConcurrent() {
+       User user = new User("casbsuw@mail.com", "milo45",500,"image");
+       when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
+
+       Thread thread1 = new Thread(() -> {
+           try {
+               userService.updateNickName("casbsuw@mail.com", "ccastano42");
+               userService.transaction("casbsuw@mail.com", -100);
+           } catch (UserException e){
+               fail(e.getMessage());
+           }
+       });
+
+       Thread thread2 = new Thread(() -> {
+           try {
+
+               userService.transaction("casbsuw@mail.com", 1000);
+           }catch (UserException e){
+               fail(e.getMessage());
+           }
+       });
+
+       Thread thread3 = new Thread(() -> {
+           try {
+               userService.transaction("casbil.com", 1000);
+           }catch (UserException e){
+               System.out.println("casbil.com "+e.getMessage());
+           }
+       });
+
+       thread1.start();
+       thread2.start();
+       thread3.start();
+
+
+       try{
+           thread1.join();
+           thread2.join();
+           thread3.join();
+
+           ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+           verify(userRepository, times(3)).save(userCaptor.capture());
+
+           User capturedUser = userCaptor.getAllValues().get(1);
+           Map<String,String> userUpdatedInfo = userService.getUserInfo(user.getEmail());
+           int balance = userService.getUserBalance(user.getEmail());
+           assertEquals("ccastano42",userUpdatedInfo.get("nickname"));
+           assertEquals(1400,balance);
+           assertEquals("ccastano42",capturedUser.getNickName());
+           assertEquals(1400,capturedUser.getBalance());
+       }catch (InterruptedException e){
+           Thread.currentThread().interrupt();
+       }catch (UserException e){
+           fail(e.getMessage());
+       }
+   }
+
+   @Test
+    void shouldConcurrentTransaction(){
+       User user = new User("casbsuw@mail.com", "milo45",2000,"image");
+       when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
+
+
+       Thread thread1 = new Thread(() -> {
+           try {
+               userService.transaction("casbsuw@mail.com", 1000);
+           } catch (UserException e){
+               assertEquals(UserException.NEGATIVE_BALANCE,e.getMessage());
+           }
+       });
+
+       Thread thread2 = new Thread(() -> {
+           try {
+               userService.transaction("casbsuw@mail.com", -2500);
+           } catch (UserException e){
+               assertEquals(UserException.NEGATIVE_BALANCE,e.getMessage());
+           }
+       });
+
+       thread1.start();
+       thread2.start();
+
+       try{
+           thread1.join();
+           thread2.join();
+           ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+           verify(userRepository, atLeastOnce()).save(userCaptor.capture());
+           User capturedUser = userCaptor.getValue();
+           int balance = userService.getUserBalance(user.getEmail());
+           assertTrue(balance == 500 || balance == 3000);
+           assertTrue(capturedUser.getBalance() == 500 || capturedUser.getBalance() == 3000);
+
+       }catch (InterruptedException e){
+           Thread.currentThread().interrupt();
+       }catch (UserException e){
+           fail(e.getMessage());
+       }
+
+
    }
 
 }
