@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import com.corundumstudio.socketio.SocketIOServer;
 
 
+
 /**
  * Configuration for Socket IO
  */
@@ -25,11 +26,18 @@ public class SocketIOConfig {
      */
     @Bean
     public SocketIOServer socketIOServer() {
+
         System.out.println("SocketIOServer" + host + ":" + port + origin);
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
         config.setHostname("0.0.0.0");
         config.setPort(port);
         config.setOrigin(origin);
+
+        // Configuraciones para compatibilidad con Socket.IO v3
+        config.setAllowCustomRequests(true);
+        config.setUpgradeTimeout(10000);
+        config.setPingTimeout(60000);
+        config.setPingInterval(25000);
 
         return new SocketIOServer(config);
     }

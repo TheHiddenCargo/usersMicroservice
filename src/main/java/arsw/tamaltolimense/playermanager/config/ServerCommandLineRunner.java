@@ -3,16 +3,16 @@ package arsw.tamaltolimense.playermanager.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import arsw.tamaltolimense.playermanager.exception.UserException;
+
 import arsw.tamaltolimense.playermanager.service.UserService;
-import com.corundumstudio.socketio.listener.ConnectListener;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import com.corundumstudio.socketio.SocketIOClient;
+
 import com.corundumstudio.socketio.SocketIOServer;
 
-import com.corundumstudio.socketio.listener.DisconnectListener;
+
 
 /**
  * Copilot
@@ -52,15 +52,10 @@ public class ServerCommandLineRunner implements CommandLineRunner {
         server.start();
         System.out.println("Servidor Socket.IO iniciado en el puerto " + server.getConfiguration().getPort());
 
-        server.addConnectListener(new ConnectListener() {
-            @Override
-            public void onConnect(SocketIOClient client) {
-                System.out.println("Cliente conectado");
-                String email = client.getHandshakeData().getSingleUrlParam(EMAIL);
-                client.joinRoom(email);
-                client.sendEvent("conexion_confirmada", "Conexión exitosa, bienvenido " + email);
-
-            }
+        server.addConnectListener(client -> {
+            String email = client.getHandshakeData().getSingleUrlParam(EMAIL);
+            System.out.println("Cliente conectado " + email);
+            client.joinRoom(email);
         });
 
         server.addEventListener("sent_info",Map.class,(client,data,ackRequest) ->{
@@ -105,12 +100,7 @@ public class ServerCommandLineRunner implements CommandLineRunner {
         });
 
 
-        server.addDisconnectListener(new DisconnectListener() {
-            @Override
-            public void onDisconnect(SocketIOClient client) {
-                System.out.println("Cliente desconectado: " + client.getSessionId());
-            }
-        });
+        server.addDisconnectListener(client -> System.out.println("Cliente desconectado: " + client.getSessionId()));
 
 
         Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
