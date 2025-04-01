@@ -22,10 +22,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{nickName}/info")
-    public ResponseEntity<Object> getUserInfo(@PathVariable("nickName") String nickName) {
+    @GetMapping("/{email}/info")
+    public ResponseEntity<Object> getUserInfo(@PathVariable("email") String email) {
         try {
-            Map<String,String> userInfo = userService.getUserInfo(nickName);
+            Map<String,String> userInfo = userService.getUserInfo(email);
             return ResponseEntity.ok(userInfo);
         } catch (UserException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
@@ -47,31 +47,9 @@ public class UserController {
         }
     }
 
-    @PutMapping("/update/nickname/{nickName}")
-    public ResponseEntity<Object> updateNickName(@PathVariable("nickName") String nickName, @RequestBody Map<String, String> data) {
-        try {
-            String newNickName = data.get("newNickName");
-            User updatedUser = userService.updateNickName(nickName, newNickName);
-            return ResponseEntity.ok(updatedUser);
-        } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
-        }
-    }
-
-    @PutMapping("/update/photo/{nickName}")
-    public ResponseEntity<Object> updatePhoto(@PathVariable("nickName") String nickName, @RequestBody Map<String, String> data) {
-        try {
-            String photo = data.get("photo");
-            User updatedUser = userService.updatePhoto(nickName, photo);
-            return ResponseEntity.ok(updatedUser);
-        } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
-        }
-    }
-
-    @DeleteMapping("/delete/{nickName}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("nickName") String nickName) {
-        userService.deleteUser(nickName);
+    @DeleteMapping("/delete/{email}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("email") String email) {
+        userService.deleteUser(email);
         return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
     }
 
