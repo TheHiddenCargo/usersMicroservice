@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         // This assumes your User entity has a getNickname() or getUsername() method
         // Adjust the method name according to your actual User entity
         return allUsers.stream()
-                .filter(user -> username.equals(user.getNickname()))
+                .filter(user -> username.equals(user.getNickName()))
                 .map(User::getEmail)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserException.USER_NOT_FOUND));
@@ -49,6 +49,11 @@ public class UserServiceImpl implements UserService {
         if(checkEmail(email))
             throw new UserException(UserException.EMAIL_FOUND);
         return userRepository.save(new User(email, nickName,balance,icon));
+    }
+
+    @Override
+    public int getUserBalance(String email) throws UserException {
+        return 0;
     }
 
     private boolean checkNickName(String nickName){
@@ -82,10 +87,48 @@ public class UserServiceImpl implements UserService {
         return userInfo;
     }
 
+    /**
+     * Realiza una transacción directamente usando el nickname del usuario
+     *
+     * @param nickname El nickname del usuario
+     * @param amount La cantidad a ajustar en el balance (positiva o negativa)
+     * @throws UserException Si el usuario no existe o si el balance resultante sería negativo
+     */
     @Override
-    public int getUserBalance(String email) throws UserException {
-        return this.getUser(email).getBalance();
+    public void transactionByNickname(String nickname, int amount) throws UserException {
+        // Buscar usuario por nickname
+        User user = userRepository.findAll().stream()
+                .filter(u -> nickname.equals(u.getNickName()))
+                .findFirst()
+                .orElseThrow(() -> new UserException(UserException.USER_NOT_FOUND));
+
+        // Verificar que el balance resultante no sea negativo
+        int balance = user.getBalance();
+        if(balance + amount < 0) throw new UserException(UserException.NEGATIVE_BALANCE);
+
+        // Realizar la transacción
+        user.transaction(amount);
+        userRepository.save(user);
     }
+
+    /**
+     * Obtiene el balance de un usuario usando su nickname
+     *
+     * @param nickname El nickname del usuario
+     * @return El balance actual del usuario
+     * @throws UserException Si el usuario no existe
+     */
+    @Override
+    public int getUserBalanceByNickname(String nickname) throws UserException {
+        // Buscar usuario por nickname
+        return userRepository.findAll().stream()
+                .filter(user -> nickname.equals(user.getNickName()))
+                .map(User::getBalance)
+                .findFirst()
+                .orElseThrow(() -> new UserException(UserException.USER_NOT_FOUND));
+    }
+
+
 
     @Override
     public void transaction(String email, int amount) throws UserException {

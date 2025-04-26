@@ -71,4 +71,32 @@ public class User {
                 && (this.balance == 0 ? user.getBalance() == 0 :this.balance == user.getBalance());
     }
 
+    public String getNickName() {
+        return nickName;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
 }

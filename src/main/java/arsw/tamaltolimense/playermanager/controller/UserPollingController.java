@@ -184,17 +184,18 @@ public class UserPollingController {
         try {
             String username = (String) userData.get("username");
             int amount = (Integer) userData.get("amount");
-    
-            // First we need to get the email from the username
+
+            // Necesitamos implementar estos dos métodos en UserService
+            // para trabajar directamente con el nickname
+            userService.transactionByNickname(username, amount);
+
+            // Actualizamos el timestamp para notificar cambios
+            // Primero obtenemos el email asociado al nickname para mantener la estructura existente
             String email = userService.getEmailByUsername(username);
-            
-            // Then proceed with the transaction using email
-            userService.transaction(email, amount);
-            
-            // Update the timestamp to notify changes
             lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
-    
-            int balance = userService.getUserBalance(email);
+
+            // Obtenemos el balance directamente usando el nickname
+            int balance = userService.getUserBalanceByNickname(username);
             Map<String, Object> responseData = new HashMap<>();
             responseData.put(USER_BALANCE, balance);
             return ResponseEntity.ok(responseData);
