@@ -185,18 +185,16 @@ public class UserPollingController {
             String username = (String) userData.get("username");
             int amount = (Integer) userData.get("amount");
     
-            // Use the username directly for the transaction
-            // Assuming userService.transaction can handle username instead of email
-            userService.transactionByUsername(username, amount);
+            // First we need to get the email from the username
+            String email = userService.getEmailByUsername(username);
             
-            // Get user info to extract email for updating timestamps
-            Map<String, String> userInfo = userService.getUserInfoByUsername(username);
-            String email = userInfo.get(EMAIL);
+            // Then proceed with the transaction using email
+            userService.transaction(email, amount);
             
             // Update the timestamp to notify changes
             lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
     
-            int balance = userService.getUserBalanceByUsername(username);
+            int balance = userService.getUserBalance(email);
             Map<String, Object> responseData = new HashMap<>();
             responseData.put(USER_BALANCE, balance);
             return ResponseEntity.ok(responseData);
@@ -205,6 +203,6 @@ public class UserPollingController {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(ERROR, e.getMessage()));
             } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
         }
-}
+    }
 
 }
