@@ -33,6 +33,19 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
         }
     }
+    @GetMapping("/nickname/{nickname}/info")
+    public ResponseEntity<Object> getUserInfoByNickname(@PathVariable("nickname") String nickname) {
+        try {
+            // Primero obtenemos el email asociado al nickname
+            String email = userService.getEmailByUsername(nickname);
+
+            // Luego obtenemos la información usando el email
+            Map<String,String> userInfo = userService.getUserInfo(email);
+            return ResponseEntity.ok(userInfo);
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
+        }
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@RequestBody Map<String, String> userData) {
