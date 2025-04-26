@@ -20,7 +20,20 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
+    @Override
+    public String getEmailByUsername(String username) throws UserException {
+        // Get all users from your repository
+        List<User> allUsers = userRepository.findAll();
+        
+        // Find the user with the matching username
+        // This assumes your User entity has a getNickname() or getUsername() method
+        // Adjust the method name according to your actual User entity
+        return allUsers.stream()
+                .filter(user -> username.equals(user.getNickname()))
+                .map(User::getEmail)
+                .findFirst()
+                .orElseThrow(() -> new UserException(UserException.USER_NOT_FOUND));
+    }
 
     @Override
     public User registerUser(String email, String nickName, int balance, String icon) throws UserException {
