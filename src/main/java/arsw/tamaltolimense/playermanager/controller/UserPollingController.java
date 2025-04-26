@@ -179,6 +179,30 @@ public class UserPollingController {
 
         }
     }
-
+    @PostMapping("/offer/username")
+    public ResponseEntity<Object> makeTransactionByUsername(@RequestBody Map<String, Object> userData) {
+        try {
+            String username = (String) userData.get("username");
+            int amount = (Integer) userData.get("amount");
+    
+            // First we need to get the email from the username
+            String email = userService.getEmailByUsername(username);
+            
+            // Then proceed with the transaction using email
+            userService.transaction(email, amount);
+            
+            // Update the timestamp to notify changes
+            lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
+    
+            int balance = userService.getUserBalance(email);
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put(USER_BALANCE, balance);
+            return ResponseEntity.ok(responseData);
+        } catch (UserException e) {
+            if(e.getMessage().equals(UserException.NEGATIVE_BALANCE)){
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(ERROR, e.getMessage()));
+            } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
+        }
+    }
 
 }
