@@ -33,5 +33,7 @@ public interface UserService {
     User updateNickName(String email, String newNickName) throws UserException;
 
     void deleteUser(String email);
+    
+    String getEmailByUsername(String username) throws UserException;
 
 }
