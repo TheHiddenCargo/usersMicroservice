@@ -53,12 +53,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int getUserBalance(String email) throws UserException {
-        // Obtener el usuario por su email
-        User user = this.getUser(email);
-        // Devolver el balance actual del usuario
-        return user.getBalance();
+        return this.getUser(email).getBalance();
     }
-
     private boolean checkNickName(String nickName){
         for(User user : userRepository.findAll()){
             if(user.getNickName().equals(nickName))
@@ -123,12 +119,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public int getUserBalanceByNickname(String nickname) throws UserException {
-        // Buscar usuario por nickname
-        return userRepository.findAll().stream()
-                .filter(user -> nickname.equals(user.getNickName()))
-                .map(User::getBalance)
-                .findFirst()
-                .orElseThrow(() -> new UserException(UserException.USER_NOT_FOUND));
+        return this.getUser(nickname).getBalance();
     }
 
 
