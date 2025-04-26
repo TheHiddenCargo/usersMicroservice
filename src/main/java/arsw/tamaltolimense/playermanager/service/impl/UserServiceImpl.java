@@ -53,7 +53,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int getUserBalance(String email) throws UserException {
-        return 0;
+        // Obtener el usuario por su email
+        User user = this.getUser(email);
+        // Devolver el balance actual del usuario
+        return user.getBalance();
     }
 
     private boolean checkNickName(String nickName){
