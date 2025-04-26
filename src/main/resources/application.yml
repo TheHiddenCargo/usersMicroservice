@@ -5,30 +5,3 @@ spring:
     mongodb:
       uri: mongodb+srv://ccastano41:EndGame2019@cluster0.brnvy.mongodb.net/the_hidden_cargo?retryWrites=true&w=majority&appName=Cluster0
       database: the_hiddn_cargo
-
-server:
-  port: 8085  # Puerto donde se ejecutará tu aplicación
-  tomcat:
-    threads:
-      max: 250  # Número máximo de hilos para manejar solicitudes
-      min-spare: 20  # Hilos mínimos en espera
-    connection-timeout: 35000  # Timeout para conexiones (en ms, un poco más que el long polling)
-    max-connections: 8192  # Número máximo de conexiones simultáneas
-    accept-count: 100
-
-socket-server:
-  host: 0.0.0.0
-  port: 8086
-  origin: "*"
-
-# Configuración de logging para monitorear el rendimiento
-logging:
-  level:
-    org.apache.tomcat.util.threads: INFO  # Para monitorear hilos de Tomcat
-    org.springframework.web: INFO
-
-app:
-  polling:
-    timeout: 30000  # Timeout para long polling en ms (30 segundos)
-    check-interval: 1000  # Intervalo de verificación en ms (1 segundo)
-      
