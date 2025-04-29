@@ -27,7 +27,7 @@ public class UserPollingController {
     private static final String BALANCE = "_balance";
 
     private static final String INFO = "_info";
-    
+
     private static final String EMAIL = "email";
 
     private final Map<String,Long> lastUpdatedTimeStamps = new ConcurrentHashMap<>();
@@ -213,8 +213,17 @@ public class UserPollingController {
     public ResponseEntity<Object> makeTransaction(@RequestBody Map<String, Object> userData) {
         try {
             String email = (String) userData.get(EMAIL);
-            int amount = (Integer) userData.get("amount");
+            Integer amountObj = (Integer) userData.get("amount");
 
+            if (email == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, "Email is required"));
+            }
+
+            if (amountObj == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, "Amount is required"));
+            }
+
+            int amount = amountObj;
             userService.transaction(email, amount);
             // Actualiza el timestamp para notificar cambios
             lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
@@ -230,18 +239,42 @@ public class UserPollingController {
 
         }
     }
+
     @PostMapping("/offer/username")
     public ResponseEntity<Object> makeTransactionByUsername(@RequestBody Map<String, Object> userData) {
         try {
             String username = (String) userData.get("username");
-            int amount = (Integer) userData.get("amount");
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, "Username is required"));
+            }
 
-            // Necesitamos implementar estos dos métodos en UserService
-            // para trabajar directamente con el nickname
+            // Verificar si amount existe y no es nulo
+            Object amountObj = userData.get("amount");
+            if (amountObj == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, "Amount is required"));
+            }
+
+            int amount;
+            // Manejar diferentes tipos posibles para amount
+            if (amountObj instanceof Integer) {
+                amount = (Integer) amountObj;
+            } else if (amountObj instanceof String) {
+                try {
+                    amount = Integer.parseInt((String) amountObj);
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, "Invalid amount format"));
+                }
+            } else if (amountObj instanceof Double || amountObj instanceof Float) {
+                // Si es un número decimal, convertir a entero
+                amount = ((Number) amountObj).intValue();
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, "Invalid amount type"));
+            }
+
+            // Realizar la transacción
             userService.transactionByNickname(username, amount);
 
             // Actualizamos el timestamp para notificar cambios
-            // Primero obtenemos el email asociado al nickname para mantener la estructura existente
             String email = userService.getEmailByUsername(username);
             lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
 
@@ -256,5 +289,4 @@ public class UserPollingController {
             } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
         }
     }
-
 }
