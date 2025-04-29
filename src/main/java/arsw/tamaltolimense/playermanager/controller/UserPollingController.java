@@ -130,6 +130,57 @@ public class UserPollingController {
         }
     }
 
+    @PostMapping("/nickname/{nickname}/balance")
+    public ResponseEntity<Object> pollUserBalanceByNickname(@PathVariable String nickname, @RequestParam(required = false) Long timestamp) {
+        try {
+            // Primero obtenemos el email relacionado con el nickname
+            String email = userService.getEmailByUsername(nickname);
+
+            if (timestamp == null) {
+                // Primera solicitud, devuelve los datos inmediatamente
+                int balance = userService.getUserBalanceByNickname(nickname);
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put(USER_BALANCE, balance);
+                lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
+                return ResponseEntity.ok(responseData);
+            }
+
+            // Comprueba si hay datos nuevos
+            long storedTimestamp = lastUpdatedTimeStamps.getOrDefault(email + BALANCE, 0L);
+
+            // Si el timestamp del cliente es más antiguo, hay datos nuevos
+            if (timestamp < storedTimestamp) {
+                int balance = userService.getUserBalanceByNickname(nickname);
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put(USER_BALANCE, balance);
+                return ResponseEntity.ok(responseData);
+            }
+
+            // Implementación de long polling (espera hasta 30 segundos)
+            long startTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() - startTime < pollingTimeout) { // 30 segundos máximo
+                Thread.sleep(checkInterval); // Comprueba cada segundo
+
+                storedTimestamp = lastUpdatedTimeStamps.getOrDefault(email + BALANCE, 0L);
+                if (timestamp < storedTimestamp) {
+                    int balance = userService.getUserBalanceByNickname(nickname);
+                    Map<String, Object> responseData = new HashMap<>();
+                    responseData.put(USER_BALANCE, balance);
+                    return ResponseEntity.ok(responseData);
+                }
+            }
+
+            // Timeout - no hay cambios, devuelve 304 Not Modified
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(ERROR, "Polling interrupted"));
+        }
+    }
+
     @PostMapping("/update/photo")
     public ResponseEntity<Object> updatePhoto(@RequestBody Map<String, String> userData) {
         try {
