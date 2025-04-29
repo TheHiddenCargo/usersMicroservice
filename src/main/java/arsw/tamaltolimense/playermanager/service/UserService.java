@@ -20,6 +20,7 @@ public interface UserService {
     int getUsernickNameBalance(String nickName) throws UserException;
     void transactionByNickname(String nickname, int amount) throws UserException;
 
+
     /**
      * Gives the user and photo of the user
      * @param email

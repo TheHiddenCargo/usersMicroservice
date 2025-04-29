@@ -150,7 +150,7 @@ public class UserPollingController {
 
             // Si el timestamp del cliente es más antiguo, hay datos nuevos
             if (timestamp < storedTimestamp) {
-                int balance = userService.getUserBalanceByNickname(nickname);
+                int balance = userService.getUsernickNameBalance(nickname);
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put(USER_BALANCE, balance);
                 return ResponseEntity.ok(responseData);
@@ -163,7 +163,7 @@ public class UserPollingController {
 
                 storedTimestamp = lastUpdatedTimeStamps.getOrDefault(email + BALANCE, 0L);
                 if (timestamp < storedTimestamp) {
-                    int balance = userService.getUserBalanceByNickname(nickname);
+                    int balance = userService.getUsernickNameBalance(nickname);
                     Map<String, Object> responseData = new HashMap<>();
                     responseData.put(USER_BALANCE, balance);
                     return ResponseEntity.ok(responseData);
@@ -246,7 +246,7 @@ public class UserPollingController {
             lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
 
             // Obtenemos el balance directamente usando el nickname
-            int balance = userService.getUserBalanceByNickname(username);
+            int balance = userService.getUsernickNameBalance(username);
             Map<String, Object> responseData = new HashMap<>();
             responseData.put(USER_BALANCE, balance);
             return ResponseEntity.ok(responseData);
