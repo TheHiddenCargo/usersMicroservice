@@ -55,6 +55,10 @@ public class UserServiceImpl implements UserService {
     public int getUserBalance(String email) throws UserException {
         return this.getUser(email).getBalance();
     }
+
+    public int getUsernickNameBalance(String nickName) throws UserException {
+        return this.getUser(nickName).getBalance();
+    }
     private boolean checkNickName(String nickName){
         for(User user : userRepository.findAll()){
             if(user.getNickName().equals(nickName))
@@ -108,18 +112,6 @@ public class UserServiceImpl implements UserService {
         // Realizar la transacción
         user.transaction(amount);
         userRepository.save(user);
-    }
-
-    /**
-     * Obtiene el balance de un usuario usando su nickname
-     *
-     * @param nickname El nickname del usuario
-     * @return El balance actual del usuario
-     * @throws UserException Si el usuario no existe
-     */
-    @Override
-    public int getUserBalanceByNickname(String nickname) throws UserException {
-        return this.getUser(nickname).getBalance();
     }
 
 

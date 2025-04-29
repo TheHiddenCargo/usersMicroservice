@@ -17,8 +17,8 @@ public interface UserService {
      * @throws UserException
      */
     int getUserBalance(String email) throws UserException;
+    int getUsernickNameBalance(String nickName) throws UserException;
     void transactionByNickname(String nickname, int amount) throws UserException;
-    int getUserBalanceByNickname(String nickname) throws UserException;
 
     /**
      * Gives the user and photo of the user

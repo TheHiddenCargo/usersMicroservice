@@ -138,7 +138,7 @@ public class UserPollingController {
 
             if (timestamp == null) {
                 // Primera solicitud, devuelve los datos inmediatamente
-                int balance = userService.getUserBalanceByNickname(nickname);
+                int balance = userService.getUsernickNameBalance(nickname);
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put(USER_BALANCE, balance);
                 lastUpdatedTimeStamps.put(email + BALANCE, System.currentTimeMillis());
