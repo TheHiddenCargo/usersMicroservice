@@ -20,7 +20,12 @@ extends:
     projectName: 'usersMicroService'
     servicePort: '8081'
     environment: 'production'
+    # Parámetros para SonarCloud
+    sonarCloudOrganization: 'tu-organizacion' # Reemplaza con tu organización real
+    sonarCloudProjectKey: 'tu-organizacion_usersMicroService' # Reemplaza con tu clave de proyecto
+    enableSonarCloud: true
     additionalSteps:
       - script: |
           echo "Running User-specific build steps"
-        displayName: 'User Service'
+          mvn verify -Pcoverage
+        displayName: 'User Service with Coverage Analysis'
