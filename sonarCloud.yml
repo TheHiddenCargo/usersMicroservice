@@ -1,4 +1,4 @@
-trigger:
+rigger:
   branches:
     include:
       - main
@@ -17,15 +17,15 @@ resources:
 extends:
   template: azure-pipelines-template.yml@socket
   parameters:
-    projectName: 'usersMicroService'
-    servicePort: '8081'
+    projectName: 'ContainersMicro'
+    servicePort: '8084'
     environment: 'production'
     # Parámetros para SonarCloud
-    sonarCloudOrganization: 'tu-organizacion' # Reemplaza con tu organización real
-    sonarCloudProjectKey: 'tu-organizacion_usersMicroService' # Reemplaza con tu clave de proyecto
+    sonarCloudOrganization: 'TheHiddenCargo
+    sonarCloudProjectKey: 'TheHiddenCargo_usersMicroservice' 
     enableSonarCloud: true
     additionalSteps:
       - script: |
           echo "Running User-specific build steps"
           mvn verify -Pcoverage
-        displayName: 'User Service with Coverage Analysis'
+        displayName: 'User Service'
