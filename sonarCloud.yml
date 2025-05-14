@@ -1,0 +1,31 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - '**'
+
+resources:
+  repositories:
+    - repository: SocketService
+      type: github
+      name: TheHiddenCargo/SocketService
+      endpoint: github-connection
+
+extends:
+  template: azure-pipelines-template.yml@socket
+  parameters:
+    projectName: 'usersMicroService'
+    servicePort: '8081'
+    environment: 'production'
+    # Parámetros para SonarCloud
+    sonarCloudOrganization: 'tu-organizacion' # Reemplaza con tu organización real
+    sonarCloudProjectKey: 'tu-organizacion_usersMicroService' # Reemplaza con tu clave de proyecto
+    enableSonarCloud: true
+    additionalSteps:
+      - script: |
+          echo "Running User-specific build steps"
+          mvn verify -Pcoverage
+        displayName: 'User Service with Coverage Analysis'
