@@ -14,7 +14,7 @@ jobs:
     with:
       java-version: '21'
       branch-name: 'main'
-      coverage-exclusions: 'src/main/java/arsw/tamaltolimense/playermanager/config/**/*,src/main/java/arsw/tamaltolimense/playermanager/controller/**/*,src/main/java/arsw/tamaltolimense/playermanager/exception/**/*,src/main/java/arsw/tamaltolimense/playermanager/repository/**/*'
+      coverage-exclusions: 'src/main/java/arsw/tamaltolimense/playermanager/config/**/*,src/main/java/arsw/tamaltolimense/playermanager/controller/**/*,src/main/java/arsw/tamaltolimense/playermanager/exception/**/*,src/main/java/arsw/tamaltolimense/playermanager/repository/**/*,src/main/java/arsw/tamaltolimense/playermanager/PlayerManager.*'
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
