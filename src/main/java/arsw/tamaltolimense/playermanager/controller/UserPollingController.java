@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("polling/users")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://white-field-008a0cb10.6.azurestaticapps.net/")
 public class UserPollingController {
 
     private final UserService userService;
